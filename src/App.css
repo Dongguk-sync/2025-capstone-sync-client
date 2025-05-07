@@ -1,0 +1,20 @@
+.App {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cal_todo{
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.cal_todo > * {
+    flex:1;
+    text-align: center;
+    height: auto;
+    padding : 10px;
+
+}

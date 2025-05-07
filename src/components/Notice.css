@@ -1,0 +1,49 @@
+.todayNotice {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 10px 20px;
+}
+
+.noticeBox{
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 10px;
+}
+
+.noticeFir, .noticeSec {
+    flex: 1;
+    text-align : start;
+    border : 1px solid;
+    border-radius: 5px;
+    height : 100px;
+    padding: 0 10px;
+    font-size: 12px;
+}
+
+.noticeThi{
+    flex: 2;
+    border : 1px solid;
+    border-radius: 5px;
+    height : 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.hello {
+    font-size: 12px;
+    text-align: start;
+    padding: 0 10px;
+    flex: 0 0 auto;
+}
+
+.contiDate{
+    flex : 1 1 auto;
+    align-items: center;
+    text-align: center;
+}

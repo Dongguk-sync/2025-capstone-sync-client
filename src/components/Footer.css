@@ -1,0 +1,17 @@
+.footer {
+    display: flex;
+    align-items: center;
+}
+
+.team {
+    font-size: 12px;
+}
+
+.teamSYnC{
+    font-size: 13px;
+}
+
+.copyright {
+    margin: 0 auto;
+    font-size: 12px;
+}

@@ -1,0 +1,43 @@
+.calender {
+    padding: 10px 20px;
+    border: 1px solid;
+    border-radius: 5px;
+    height: auto;
+    display: inline-block;
+}
+
+.CalHeader{
+    display: flex;
+    justify-content: start;   
+    align-items: center;        
+    text-align: center; 
+    height: 15%;
+}
+
+.weekdays{
+    display: grid; 
+    grid-template-columns: repeat(7, 1fr); 
+    margin-bottom: 8px;
+}
+
+.cells .row { 
+    display: grid; 
+    grid-template-columns: repeat(7, 1fr); 
+}
+
+
+.cell { 
+    padding: 8px; 
+    text-align: center; 
+    cursor: pointer; 
+    border-radius: 4px; 
+    margin-bottom: 4px; 
+}
+
+.cell.disabled { 
+    color: #a0aec0; 
+}
+
+.cell.selected { 
+    background: #bee3f8; 
+}
