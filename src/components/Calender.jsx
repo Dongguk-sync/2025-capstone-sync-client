@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import "./Calender.css"
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, differenceInCalendarDays } from 'date-fns';
+import Study from './Study';
 
-
+// 캘린더랑 todaytodo 합치는게 좋을거 같음
 
 const Calender = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
 
-    
+
 
     const renderHeader = () => (
         <div className="CalHeader">
@@ -58,11 +59,23 @@ const Calender = () => {
 
     
     return (
-        <div>
+        <div className="mainStudy">
             <div className="calender">
                 {renderHeader()}
                 {renderDays()}
                 {renderCells()}
+            </div>
+            <div className="detail">
+                <div className="detailDate">
+                    {format(selectedDate, 'MM월 dd일')}
+                    <div className="addDetail">
+                        <button>+ 학습추가</button>
+                        <button>+ 시험추가</button>
+                    </div>
+                </div>
+                <div>
+                  <Study />
+                </div>
             </div>
         </div>
     )
