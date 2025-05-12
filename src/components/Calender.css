@@ -1,10 +1,23 @@
-.calender {
+.mainStudy {
     padding: 10px 20px;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap:10px;
+}
+
+.calender {
     border: 1px solid;
     border-radius: 5px;
-    height: auto;
-    display: inline-block;
+    flex:1;
 }
+.detail{
+    border: 1px solid;
+    border-radius: 5px;
+    flex:1;
+}
+
+
 
 .CalHeader{
     display: flex;
@@ -41,3 +54,27 @@
 .cell.selected { 
     background: #bee3f8; 
 }
+
+.detail{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+}
+
+.detailDate{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.addDetail{
+    display: flex;
+    gap: 10px;
+}
+
+
+.studyDetail{
+    text-align: start; 
+}
+
