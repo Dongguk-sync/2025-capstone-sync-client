@@ -1,5 +1,6 @@
 import "./Header.css"
 import {FaBars} from 'react-icons/fa'
+import profile from "../assets/avatar.jpg"
 
 const Header = ({goTo})=> {
     return (
@@ -18,7 +19,7 @@ const Header = ({goTo})=> {
                 <button
                     className="profile-btn">
                         <img 
-                            src="../avatar.jpg"
+                            src={profile} alt="profile" className="profile_icon"
                         />
                 </button>
                 <button

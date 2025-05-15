@@ -23,3 +23,11 @@ button {
     outline: none;         /* focus 됐을 때 나오는 윤곽선 제거 */
     cursor: pointer;
 }
+
+.profile_icon {
+  width: 20px;         /* 원하는 가로 크기 */
+  height: 20px;        /* 원하는 세로 크기 */
+  object-fit: cover;   /* 비율 유지하며 잘라내기 */
+  border-radius: 50%; 
+}
+

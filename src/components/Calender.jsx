@@ -2,13 +2,43 @@ import React, { useState, useEffect } from 'react';
 import "./Calender.css"
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, differenceInCalendarDays } from 'date-fns';
 import Study from './Study';
+import { getSchedules, deleteSchedule } from '../data/calendarService';
+
 
 // 캘린더랑 todaytodo 합치는게 좋을거 같음
 
-const Calender = () => {
+const Calender = ({ onAddStudy, onStartStudy }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [schedules, setSchedules] = useState([]);
 
+    // selectedDate 변경 시 스케줄 로드
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');  // YYYY-MM-DD
+      try {
+        const list = await getSchedules(dateStr);
+        setSchedules(list);
+      } catch (err) {
+        console.error('스케줄 로드 실패:', err);
+        setSchedules([]);
+      }
+    };
+    fetchSchedules();
+  }, [selectedDate]);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    try {
+      await deleteSchedule(id);
+      // 삭제 후 재조회
+      const dateStr = selectedDate.toISOString().slice(0, 10);
+      const list = await getSchedules(dateStr);
+      setSchedules(list);
+    } catch (err) {
+      console.error('삭제 실패:', err);
+    }
+  };
 
 
     const renderHeader = () => (
@@ -74,7 +104,11 @@ const Calender = () => {
                     </div>
                 </div>
                 <div>
-                  <Study />
+                  <Study 
+                    schedules={schedules}
+                    onDelete={handleDelete}
+                    onStartStudy={onStartStudy}
+                  />
                 </div>
             </div>
         </div>

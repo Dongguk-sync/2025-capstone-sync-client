@@ -18,3 +18,20 @@
     padding : 10px;
 
 }
+
+/* App.css */
+
+a {
+  text-decoration: none;  /* 밑줄 없애기 */
+  color: inherit;         /* 부모 컬러를 물려받도록 (원한다면 다른 색 지정) */
+}
+
+/* 호버 시에도 언더라인이 보이지 않게 */
+a:hover {
+  text-decoration: none;
+}
+
+/* 포커스 아웃라인까지 제거하고 싶으면 (접근성 고려 필요) */
+a:focus {
+  outline: none;
+}

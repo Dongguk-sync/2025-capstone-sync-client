@@ -1,0 +1,44 @@
+/* 1) 헤더는 항상 위에 보이도록 z-index를 충분히 크게 */
+header {
+    position: relative;   /* 이미 fixed/absolute 일 경우 생략 가능 */
+    z-index: 1002;
+  }
+  
+  /* 2) 헤더 바로 아래부터 화면 끝까지 덮는 오버레이 */
+  .modal-overlay {
+    position: fixed;
+    top: var(--header-height); 
+    /* CSS 변수로 헤더 높이를 지정하거나, px 값 직접 입력 */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    border: 1px solid;
+  }
+  
+  /* 3) 모달 윈도우는 오버레이 위에 렌더링 */
+  .modal-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 500px;
+    width: 90%;
+    z-index: 1001;
+  }
+  
+  /* 4) 닫기 버튼 */
+  .modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
