@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import "./Calender.css"
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, differenceInCalendarDays } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
 import Study from './Study';
 import { getSchedules, deleteSchedule } from '../data/calendarService';
 
 
 // 캘린더랑 todaytodo 합치는게 좋을거 같음
 
-const Calender = ({ onAddStudy, onStartStudy }) => {
+const Calender = ({ onAddStudy, onStartStudy, onAddExam }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [schedules, setSchedules] = useState([]);
@@ -99,8 +99,8 @@ const Calender = ({ onAddStudy, onStartStudy }) => {
                 <div className="detailDate">
                     {format(selectedDate, 'MM월 dd일')}
                     <div className="addDetail">
-                        <button>+ 학습추가</button>
-                        <button>+ 시험추가</button>
+                        <button onClick={()=>onAddStudy()}>+ 학습추가</button>
+                        <button onClick={()=>onAddExam()}>+ 시험추가</button>
                     </div>
                 </div>
                 <div>

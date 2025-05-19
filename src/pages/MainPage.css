@@ -1,0 +1,106 @@
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: fit-content;
+  max-width: 90%;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  display: inline-block;
+  position: relative;
+} 
+
+
+.record_img {
+    display: flex;
+    justify-content: center;
+    height: 100px;
+}
+
+.record_img img {
+    width: 70px;
+    height: 70px;
+}
+
+.AddStudy p{
+    display: flex;
+    justify-content: center;
+}
+
+.AddStudyDiv{
+    display: flex;
+    gap: 10px;
+}
+
+
+.AddStudyDate{
+    display: flex;
+    flex:1;
+}
+
+.AddStudyDate label{
+    width: 40px;
+}
+
+.AddStudyDetail{
+    display: flex;
+    flex-direction: column;
+    flex:1;
+}
+
+.AddStudyDetail div {
+    flex: 1;
+}
+
+
+
+.SelectSubject {
+    padding: 15px 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.SelectMeterial {
+    padding: 15px 10px;
+    border-bottom: 1px solid #ddd;  
+}
+
+.Alarm{
+    padding: 15px 10px;
+    border-bottom: 1px solid #ddd; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.SelectSubject-row, .SelectMeterial-row {
+  display: flex;
+  align-items: center; /* 레이블·인풋 수직 중앙 정렬 */
+  gap: 10px;            /* label ↔ input 사이 여백 */
+}
+
+.SelectSubject-row label, .SelectMeterial-row label {
+    width: 60px;
+    text-align: center;
+}
+
+.SelectSubject-row input, .SelectMeterial-row input {
+    flex:1; 
+    box-sizing: border-box;
+}
+
+.SelectSubject-btn, .SelectMeterial-btn {
+  display: block;      /* 한 줄 전체를 차지 */
+  margin-top: 8px;     /* 위의 행(레이블+인풋)과 간격 */
+  margin-left: 70px;
+  background-color: #ddd;
+  width: 100px;
+}
+
+.AddStudySubmit{
+    width: 120px;
+    font-size: 16px;
+    background-color: #ddd;
+    display: block;
+    margin: 10px auto 0;
+}
+

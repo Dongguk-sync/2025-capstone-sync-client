@@ -1,20 +1,19 @@
 import "./Header.css"
 import {FaBars} from 'react-icons/fa'
 import profile from "../assets/avatar.jpg"
+import { Link } from 'react-router-dom'; 
 
-const Header = ({goTo})=> {
+
+const Header = ()=> {
     return (
         <div className="Header">
-            <button 
-                className="Logo"
-                onClick={()=>goTo('main')}
-                >
-                    Baekji</button>
+            <Link to ='/main' className="Logo">
+                Baekji
+            </Link>
             <div className="menu">
-                <button
-                    onClick={()=> goTo('chatbot')}>
-                        챗봇에게 질문하기
-                </button>
+                <Link to ='/ChatBot' className="chatbot">
+                    챗봇에게 질문하기
+                </Link>
                 <button>학습기록 및 교안관리</button>
                 <button
                     className="profile-btn">
