@@ -21,47 +21,43 @@
     height: 70px;
 }
 
-.AddStudy p{
+.AddStudy p, .AddExam p{
     display: flex;
     justify-content: center;
 }
 
-.AddStudyDiv{
+.AddStudyDiv, .AddExamDiv{
     display: flex;
     gap: 10px;
 }
 
 
-.AddStudyDate{
+.AddStudyDate, .AddExamDate{
     display: flex;
     flex:1;
 }
 
-.AddStudyDate label{
+.AddStudyDate label, .AddExamDate label {
     width: 40px;
 }
 
-.AddStudyDetail{
+.AddStudyDetail, .AddExamDetail{
     display: flex;
     flex-direction: column;
     flex:1;
 }
 
-.AddStudyDetail div {
+.AddStudyDetail div, .AddExamDetail div{
     flex: 1;
 }
 
 
 
-.SelectSubject {
+.SelectSubject, .AddExamTitle,  .SelectMeterial{
     padding: 15px 10px;
     border-bottom: 1px solid #ddd;
 }
 
-.SelectMeterial {
-    padding: 15px 10px;
-    border-bottom: 1px solid #ddd;  
-}
 
 .Alarm{
     padding: 15px 10px;
@@ -72,13 +68,13 @@
 }
 
 
-.SelectSubject-row, .SelectMeterial-row {
+.SelectSubject-row, .SelectMeterial-row, .AddExamTitle {
   display: flex;
   align-items: center; /* 레이블·인풋 수직 중앙 정렬 */
   gap: 10px;            /* label ↔ input 사이 여백 */
 }
 
-.SelectSubject-row label, .SelectMeterial-row label {
+.SelectSubject-row label, .SelectMeterial-row label, .AddExamTitle label {
     width: 60px;
     text-align: center;
 }

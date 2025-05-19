@@ -18,6 +18,7 @@ export default function MainPage() {
   const [modalType, setModalType] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
+
   // Calender → MainPage로, +학습추가 클릭
   const handleAddStudy = () => {
     setStudyItem(null);      // 새로 추가할 땐 아이템 정보 비움
@@ -118,24 +119,62 @@ export default function MainPage() {
               </div>
               <button 
                 className="AddStudySubmit"
-                >제출하기
+              >등록
               </button>
             </div>
+            </div>
           </div>
-        </div>
         )}
 
         {/* 시험 추가 모달 */}
         {modalType === 'addExam' && (
-          <>
-            <h2>시험 일정 추가</h2>
-            <p>시험 이름과 날짜를 입력해주세요.</p>         
-            <Link to="/exam/new">
-              <button onClick={() => setShowModal(false)}>
-                등록하기
+          <div className="AddExam">
+            <p>시험 일정을 등록해주세요</p>        
+            <div className="AddExamDiv"> 
+              <div className="AddExamDate">              
+                <label>날짜</label>
+                <DatePicker 
+                  selected={selectedDate}
+                  onChange={setSelectedDate}/>
+              </div>
+              <div className="AddExamDetail">
+                <div className="AddExamTitle">
+                  <label>시험명</label>
+                  <input 
+                    type="text"
+                    placeholder="시험명을 입력하세요"
+                  />
+                </div>
+
+                <div className="SelectSubject">
+                  <div className="SelectSubject-row">
+                    <label>과목</label>
+                    <input
+                      type="text"
+                      //value={subject}
+                      readOnly
+                      placeholder="과목 선택"
+                    />
+                  </div>
+                <button className="SelectSubject-btn">과목 선택</button>
+              </div>
+              <div>
+                <div className="Alarm">
+                  <label>시험 전 학습 자동 생성</label>
+                  <OnOffToggle />
+                </div>
+                <div className="Alarm">
+                  <label>학습 알림</label>
+                  <OnOffToggle />
+                </div>
+              </div>
+              <button 
+                className="AddStudySubmit"
+              >등록
               </button>
-            </Link>
-          </>
+            </div>
+            </div>
+          </div>
         )}
       </Modal>
     </div>
