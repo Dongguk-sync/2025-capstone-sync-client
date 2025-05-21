@@ -1,0 +1,39 @@
+.suggest_input {
+    height: 100px;
+}
+
+.FAQ {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.FAQ_content{
+    border: 1px solid;
+    height: 100px;
+}
+
+.suggest {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.suggets_submit {
+    text-align: center;
+    padding: 10px 50px;
+    background-color: #ddd;
+    margin-left: auto;
+    margin-right: 0;
+    
+}
+
+.support {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.support label{
+    font-size: 16px;
+}

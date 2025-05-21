@@ -1,0 +1,64 @@
+.layout-fixed html, .layout-fixed body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.layout-fixed {
+    height: 100vh;
+}
+
+.Profile {
+    display: flex;
+    gap: 30px;
+    padding: 10px 50px;
+}
+
+.sideBar{
+    width: 20vw;
+    min-width: 30px;
+    border: 1px solid #ddd;
+    border-radius: 5%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    height: calc(100vh - 35px - 80px - 60px);
+}
+
+.profileContent{
+    width: 60vw;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    height: calc(100vh - 35px - 80px - 60px);
+}
+
+.myInfo, .CS, .myRecord{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+}
+
+.layout-fixed footer {
+    flex: 0 0 auto;
+    position: fixed;
+    bottom: 0;
+    z-index: 10;
+}
+
+
+.sideBar button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+/* 선택된 버튼에만 적용될 스타일 */
+.sideBar button.active {
+  background-color: #1e2a55;  /* 원하는 배경색 */
+  color: #ffffff;            /* 선택 시 글자색 */
+}

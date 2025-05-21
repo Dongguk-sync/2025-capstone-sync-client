@@ -3,6 +3,7 @@
     justify-content: space-between;
     align-items: center;
     color: #25365F;
+    height: 35px;
 }
 
 .Logo {
@@ -16,6 +17,8 @@
     align-items: center;
     gap: 30px;
 }
+
+
 
 button {
     background : none;

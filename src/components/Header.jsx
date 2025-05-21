@@ -15,12 +15,11 @@ const Header = ()=> {
                     챗봇에게 질문하기
                 </Link>
                 <button>학습기록 및 교안관리</button>
-                <button
-                    className="profile-btn">
-                        <img 
-                            src={profile} alt="profile" className="profile_icon"
-                        />
-                </button>
+                <Link to ='/Profile' className="profile-btn">
+                    <img 
+                        src={profile} alt="profile" className="profile_icon"
+                    />
+                </Link>
                 <button
                 // 반응형으로 화면 작을 때만 나타내기
                     className="hamburger-btn">
