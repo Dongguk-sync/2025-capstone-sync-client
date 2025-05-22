@@ -1,13 +1,22 @@
 import "./Notice.css"
-
+ 
 const Notice = () =>{
 
     return (
         <div className="todayNotice">
-            <div>Today{new Date().toLocaleDateString()}</div>
+            <div className="today_date">
+                <div>Today</div>
+                {new Date().toLocaleDateString()}
+            </div>
             <div className="noticeBox">
-                <div className="noticeFir">시험까지</div>
-                <div className="noticeSec">오늘의 학습률</div>
+                <div className="noticeFir">
+                    <div className="ToExam">시험까지</div>
+                </div>
+                <div className="noticeSec">
+                    <div className="Today_rate">
+                        오늘의 학습률
+                    </div>
+                </div>
                 <div className="noticeThi">
                     <div className="hello">
                     sync님, 환영해요😄<br/>오늘 하루도 힘내서 공부해봅시다.

@@ -1,23 +1,24 @@
 .mainStudy {
-    padding: 10px 20px;
+    padding: 10px 60px;
     height: auto;
     display: flex;
     flex-wrap: wrap;
     gap:10px;
+
 }
 
 .calender {
-    border: 1px solid;
-    border-radius: 5px;
     flex:1;
+    /* box-shadow: 1px 1px 10px 0 var(--color-main);
+    border-radius: 20px; */
+
 }
+
 .detail{
     border: 1px solid;
     border-radius: 5px;
     flex:1;
 }
-
-
 
 .CalHeader{
     display: flex;
@@ -25,19 +26,21 @@
     align-items: center;        
     text-align: center; 
     height: 15%;
+    padding: 10px 20px;
+    gap: 10px;
 }
 
 .weekdays{
     display: grid; 
     grid-template-columns: repeat(7, 1fr); 
     margin-bottom: 8px;
+    text-align: center;
 }
 
 .cells .row { 
     display: grid; 
     grid-template-columns: repeat(7, 1fr); 
 }
-
 
 .cell { 
     padding: 8px; 
@@ -73,8 +76,6 @@
     gap: 10px;
 }
 
-
 .studyDetail{
     text-align: start; 
 }
-

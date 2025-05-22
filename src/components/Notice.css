@@ -3,8 +3,13 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 5px;
-    padding: 10px 20px;
+    gap: 10px;
+    padding: 20px 60px;
+}
+
+.today_date{
+    display: flex;
+    gap: 10px;
 }
 
 .noticeBox{
@@ -13,30 +18,34 @@
     position: relative;
     flex-wrap: wrap;
     width: 100%;
-    gap: 10px;
+    gap: 20px;
 }
 
 .noticeFir, .noticeSec {
     flex: 1;
     text-align : start;
-    border : 1px solid;
-    border-radius: 5px;
-    height : 100px;
-    padding: 0 10px;
-    font-size: 12px;
+    border : 1px solid var(--color-main);
+    border-radius: 20px;
+    padding: 10px;
 }
 
 .noticeThi{
     flex: 2;
-    border : 1px solid;
-    border-radius: 5px;
+    border : 1px solid var(--color-main);
+    border-radius: 20px;
     height : 100px;
     display: flex;
     flex-direction: column;
+    padding: 10px;
 }
 
+.ToExam, .Today_rate{
+    padding: 5px 0;
+    border-bottom: 1px solid;
+}
+
+
 .hello {
-    font-size: 12px;
     text-align: start;
     padding: 0 10px;
     flex: 0 0 auto;
@@ -44,6 +53,7 @@
 
 .contiDate{
     flex : 1 1 auto;
-    align-items: center;
     text-align: center;
+    font-size: 1.2rem;
+    justify-content: center;
 }

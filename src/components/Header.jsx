@@ -17,7 +17,7 @@ const Header = ()=> {
                 <button>학습기록 및 교안관리</button>
                 <Link to ='/Profile' className="profile-btn">
                     <img 
-                        src={profile} alt="profile" className="profile_icon"
+                        src={profile} alt="profile" className="profile-btn"
                     />
                 </Link>
                 <button

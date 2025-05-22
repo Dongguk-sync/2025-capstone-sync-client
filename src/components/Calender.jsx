@@ -5,8 +5,6 @@ import Study from './Study';
 import { getSchedules, deleteSchedule } from '../data/calendarService';
 
 
-// 캘린더랑 todaytodo 합치는게 좋을거 같음
-
 const Calender = ({ onAddStudy, onStartStudy, onAddExam }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -44,8 +42,8 @@ const Calender = ({ onAddStudy, onStartStudy, onAddExam }) => {
     const renderHeader = () => (
         <div className="CalHeader">
             <button onClick={() => setCurrentMonth(addDays(currentMonth, -30))}>◀</button>
-            <h2>{format(currentMonth, 'MMMM')}</h2>
             <button onClick={() => setCurrentMonth(addDays(currentMonth, 30))}>▶</button>
+            <h2>{format(currentMonth, 'yyy MMMM')}</h2>
         </div>
     );
 
@@ -88,13 +86,17 @@ const Calender = ({ onAddStudy, onStartStudy, onAddExam }) => {
       };
 
     
-    return (
+    return ( 
         <div className="mainStudy">
+          {/* 오른쪽 달력 부분 */}
             <div className="calender">
                 {renderHeader()}
                 {renderDays()}
                 {renderCells()}
             </div>
+
+
+          {/* 왼쪽 학습 일정 부분 */}
             <div className="detail">
                 <div className="detailDate">
                     {format(selectedDate, 'MM월 dd일')}

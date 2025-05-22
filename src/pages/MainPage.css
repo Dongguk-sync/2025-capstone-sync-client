@@ -9,7 +9,6 @@
   position: relative;
 } 
 
-
 .record_img {
     display: flex;
     justify-content: center;
@@ -51,13 +50,10 @@
     flex: 1;
 }
 
-
-
 .SelectSubject, .AddExamTitle,  .SelectMeterial{
     padding: 15px 10px;
     border-bottom: 1px solid #ddd;
 }
-
 
 .Alarm{
     padding: 15px 10px;
@@ -66,7 +62,6 @@
     align-items: center;
     justify-content: space-between;
 }
-
 
 .SelectSubject-row, .SelectMeterial-row, .AddExamTitle {
   display: flex;
@@ -99,4 +94,3 @@
     display: block;
     margin: 10px auto 0;
 }
-
