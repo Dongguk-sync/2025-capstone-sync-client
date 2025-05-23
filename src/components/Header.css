@@ -1,17 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+
 .Header {
+    position: fixed;
+    top:0;
+    left: 0;
+    right: 0; 
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 50px;
-    padding: 0 30px;
+    padding: 10px 80px;
+    background-color: white;
+    z-index: 1000;
+
 }
 
 .Logo {
     font-size: 32px;
-    font-weight: bold;
+    /* font-weight: bold; */
     justify-content: center;
     align-items: center;
     color: var(--color-main);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
 }
 
 .menu {
@@ -22,7 +33,7 @@
     font-size: 16px;
 }
 
-.profile-btn{
+.profile-btn {
   width: 25px;
   height: 25px;  
   object-fit: cover;

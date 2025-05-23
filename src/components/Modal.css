@@ -1,14 +1,13 @@
-
 .modal-overlay {
   position: fixed;
-  top: 0; /* 또는 헤더 밑에서 시작하고 싶으면 top: var(--header-height) */
+  top: var(--header-height); /* 또는 헤더 밑에서 시작하고 싶으면 top: var(--header-height) */
   left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
+} 
 
 .modal-window {
   position: relative;

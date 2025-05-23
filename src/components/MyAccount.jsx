@@ -1,6 +1,6 @@
 import profile from "../assets/avatar.jpg"
 import React, { useState } from 'react';
-import './MyAccount.css'
+import '../pages/Profile.css'
 import OnOffToggle from "../components/OnOff";
 
 

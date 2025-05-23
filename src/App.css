@@ -1,9 +1,10 @@
 :root {
-  --color-main: #25365F;
-  --color-sub: #3996DA;
-  --color-point: #FFF7D8;
+  --color-main: rgb(37, 54, 95);
+  --color-sub: rgb(57, 150, 218);
+  --color-point: rgb(255, 247, 216);
+  --header-height: 70px;
 }
-
+ 
 /* 글자 크기를 한번에 조정*/
 html {
   font-size: 16px;  /* 기본 폰트를 16px로 고정 */
@@ -18,7 +19,8 @@ body {
 
 
 .app-container {
-    padding: 10px 50px;
+    padding: 0 50px;
+    padding-bottom: 10px;
     display: flex;
     flex-direction: column;
 }

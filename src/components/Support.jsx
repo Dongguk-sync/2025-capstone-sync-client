@@ -1,4 +1,4 @@
-import './Support.css'
+import '../pages/Profile.css'
 
 export default function Support() {
     return (
