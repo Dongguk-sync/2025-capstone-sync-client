@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import "./Calender.css"
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
 import Study from './Study';
-import { getSchedulesInRange, deleteSchedule } from '../data/calendarService';
+// import { getSchedulesInRange, deleteSchedule } from '../data/calendarService';
+import { getSchedulesInRange, deleteSchedule } from '../data/mockStudyService';
 
 
 const Calender = ({ onAddStudy, onStartStudy, onAddExam }) => {

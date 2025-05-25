@@ -94,3 +94,31 @@
     display: block;
     margin: 10px auto 0;
 }
+
+.goBack_btn {
+    position: fixed;
+}
+
+.searchSubject{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+}
+
+.searchSubject_search{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.searchContent{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.search_btn{
+    border: 1px solid;
+    padding: 5px;
+}
