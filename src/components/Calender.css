@@ -1,36 +1,32 @@
 .mainStudy {
-    padding: 10px 20px;
+    padding: 10px 100px;
     height: auto;
     display: flex;
     flex-wrap: wrap;
-    gap:10px;
+    gap:20px;
 }
 
 .calender {
-    border: 1px solid;
-    border-radius: 5px;
     flex:1;
-}
-.detail{
-    border: 1px solid;
-    border-radius: 5px;
-    flex:1;
-}
+    /* box-shadow: 1px 1px 10px 0 var(--color-main);
+    border-radius: 20px; */
 
-
+}
 
 .CalHeader{
     display: flex;
     justify-content: start;   
     align-items: center;        
     text-align: center; 
-    height: 15%;
+    height: 10%;
+    gap: 10px;
 }
 
 .weekdays{
     display: grid; 
     grid-template-columns: repeat(7, 1fr); 
     margin-bottom: 8px;
+    text-align: center;
 }
 
 .cells .row { 
@@ -38,13 +34,25 @@
     grid-template-columns: repeat(7, 1fr); 
 }
 
+.cells {
+    box-shadow: 1px 1px 5px 0 var(--color-main);
+}
 
 .cell { 
-    padding: 8px; 
+    padding: 3px; 
     text-align: center; 
     cursor: pointer; 
-    border-radius: 4px; 
-    margin-bottom: 4px; 
+    height: 70px;
+    border-top: 1px solid var(--color-main)
+}
+
+.cell-date{
+    text-align: start;
+}
+
+.cell-count {
+    font-size: 0.8rem;
+    background-color: #D9D9D9;
 }
 
 .cell.disabled { 
@@ -52,10 +60,14 @@
 }
 
 .cell.selected { 
-    background: #bee3f8; 
+    background-color: var(--color-point);
+    /* background: #bee3f8;  */
 }
 
+
+/* 오른쪽 학습 일정 세부내용 부분 */
 .detail{
+    flex:1;
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -66,6 +78,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 5px;
 }
 
 .addDetail{
@@ -73,8 +86,53 @@
     gap: 10px;
 }
 
+.StudyButton{
+    border: 1px solid;
+    padding: 3px 10px;
+    border-radius: 5px;
+}
 
 .studyDetail{
     text-align: start; 
 }
 
+
+/* 오른쪽 Study.css에 대한 부분 */
+.StudySche{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.StudyBtns {
+    display: flex;
+    gap: 10px;
+}
+
+.NoSchedule{
+    border: 1px solid gray;
+    border-radius: 20px;
+    text-align: center;
+    padding: 10px;
+
+}
+
+.StudyList{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border: 1px solid gray;
+    border-radius: 20px;
+    padding: 5px;
+}
+
+/* 학습하기 버튼 */
+.StudyBtn {
+    border: 1px solid;
+    width: 100px;
+    padding: 3px;
+    border-radius: 8px;
+    background-color: var(--color-main);
+    color: var(--color-point);
+}

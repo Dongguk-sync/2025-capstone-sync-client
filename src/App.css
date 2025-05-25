@@ -1,20 +1,49 @@
-.App {
-    padding: 10px 20px;
+:root {
+  --color-main: rgb(37, 54, 95);
+  --color-sub: rgb(57, 150, 218);
+  --color-point: rgb(255, 247, 216);
+  --header-height: 70px;
+  --sidebar-width: 260px;
+}
+ 
+/* 글자 크기를 한번에 조정*/
+html {
+  font-size: 16px;  /* 기본 폰트를 16px로 고정 */
+}
+
+body {
+  font-size: 1rem;  /* html font-size(16px)를 기준으로 1rem = 16px */
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif; /* 원하시는 기본 폰트 패밀리로 설정 */
+}
+
+
+.app-container {
+    padding: 0 50px;
+    padding-bottom: 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 
-.cal_todo{
-    display: flex;
-    gap: 10px;
-    width: 100%;
+a {
+  text-decoration: none;  /* 밑줄 없애기 */
+  color: inherit;         /* 부모 컬러를 물려받도록 (원한다면 다른 색 지정) */
 }
 
-.cal_todo > * {
-    flex:1;
-    text-align: center;
-    height: auto;
-    padding : 10px;
+/* 호버 시에도 언더라인이 보이지 않게 */
+a:hover {
+  text-decoration: none;
+}
 
+a:focus {
+  outline: none;
+}
+
+button {
+    background : none;
+    border: none;         
+    padding: 0;            
+    outline: none;        
+    cursor: pointer;
 }

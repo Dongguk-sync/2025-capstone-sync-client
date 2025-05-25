@@ -1,0 +1,298 @@
+/* 전체 컨테이너 */
+.slide-container {
+  inset: 0;  
+  display: flex;
+  position: fixed;
+  overflow: hidden;
+  padding: 0 1rem;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+
+/* 공통 */
+.slide-panel {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  /* left·width 전환에 transition 주기 */
+  transition: left 0.6s ease-in-out, width 0.6s ease-in-out;
+}
+
+/* 왼쪽 패널: 초기엔 full-width, 슬라이드 후 34% */
+.slide-panel--left {
+  width: 100%;
+  left: 50%;
+}
+.slide-container.slid .slide-panel--left {
+  width: 60%;
+  left: 34%;
+}
+
+/* 오른쪽 패널: 항상 40%, 초기엔 바깥(150%), 슬라이드 후 88% */
+.slide-panel--right {
+  width: 40%;
+  left: 150%;
+}
+.slide-container.slid .slide-panel--right {
+  left: 88%;
+}
+
+
+.landing__title {
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  text-align: center;
+}
+.landing__text {
+  font-size: 1rem;
+  color: #4a5568;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 360px;
+  
+}
+.auth-form__header {
+  text-align: right;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+.auth-form__header a {
+  color: #25365F;
+  text-decoration: none;
+  margin-left: 0.25rem;
+}
+
+.auth-form__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.auth-form__subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form__label {
+  display: block;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+.auth-form__input {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  box-sizing: border-box;
+}
+
+.auth-form__password-wrapper {
+  position: relative;
+}
+.auth-form__toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.re_auth-form__toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.auth-form__options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+.auth-form__options label {
+  display: flex;
+  align-items: center;
+}
+.auth-form__options input {
+  margin-right: 0.5rem;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+}
+.auth-form__options a {
+  color: #25365F;
+  text-decoration: none;
+}
+
+.auth-form__submit {
+  width: 100%;
+  padding: 0.75rem;
+  background: #25365F;
+  color: #ffffff;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form__divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+.auth-form__divider::before,
+.auth-form__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+.auth-form__divider::before {
+  margin-right: 0.75rem;
+}
+.auth-form__divider::after {
+  margin-left: 0.75rem;
+}
+
+.auth-form__socials {
+  display: flex;
+  justify-content: center; /* 가로 중앙으로 정렬 */
+  gap: 4rem; /* 버튼 사이 간격 */
+}
+
+.social-btn {
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* 브랜드별 아이콘 색상 */
+.social-btn--google svg {
+  color: #4285F4;   /* Google Blue */
+}
+.social-btn--naver svg {
+  color: #03C75A;   /* Naver Green */
+}
+.social-btn--kakao svg {
+  color: #FFCD00;   /* Kakao Yellow */
+}
+
+.social-btn:focus {
+  outline: none;
+}
+
+.name-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(10%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.email-input-wrapper {
+  position: relative;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.email-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(10%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.phone-input-wrapper {
+  position: relative;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.phone-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(10%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.password-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+/* 눈 토글 */
+.password-toggle-icon {
+  width: 16px;
+  height: 16px;
+  transform: translateY(15%);
+  pointer-events: none;
+}
+
+.retype_password-input-wrapper {
+  position: relative;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.retype_password-input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(20%);
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+/* 눈 토글 */
+.retype_password-toggle-icon {
+  width: 16px;
+  height: 16px;
+  transform: translateY(70%);
+  pointer-events: none;
+}

@@ -1,0 +1,173 @@
+.Profile {
+    margin-top: var(--header-height);
+    display: flex;
+    gap: 30px;
+    padding: 10px 50px;
+    min-height: calc(100vh - 200px);
+}
+
+.sideBar{
+    position: fixed;
+    width: 20vw;
+    min-width: 30px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 60px;
+    height: 400px;
+}
+
+.profileContent{
+    flex: 1 1 auto;
+    margin-left: 25vw;
+}
+
+.myInfo, .CS, .myRecord{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.8rem;
+}
+
+.sideBar button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+/* 선택된 버튼에만 적용될 스타일 */
+.sideBar button.active {
+  background-color: #1e2a55;  /* 원하는 배경색 */
+  color: #ffffff;            /* 선택 시 글자색 */
+}
+
+/* 계정 관리 페이지에 대한 css(MyAccount.css) */
+.MyAccount{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.MyAccount > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.Profile_icon {
+  width: 100px;         /* 원하는 가로 크기 */
+  height: 100px;        /* 원하는 세로 크기 */
+  object-fit: cover;   /* 비율 유지하며 잘라내기 */
+  border-radius: 50%; 
+}
+
+.basicInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid;
+    border-radius: 20px;
+    /* width: 100%; */
+    padding: 10px;
+}
+
+label {
+    font-size: 0.8rem;
+}
+
+.Nickname, .Email {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    gap: 5px;
+}
+
+.password, .deleteAccount{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border: 1px solid;
+    border-radius: 20px;
+    height: 50px;
+    
+}
+
+.password_update, .deleteAccount div{
+    flex: 1;
+    justify-content: center;
+}
+
+.password_btn, .deleteAccount button{
+    flex: 0 0 auto;
+    border: 1px solid;
+    padding: 5px 10px;
+    background-color: #ddd;
+}
+
+.E-Alarm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid;
+    border-radius: 20px;
+    /* width: 100%; */
+    padding: 10px 20px;
+    align-items: flex-start;
+}
+
+.studyalarm, .examalarm {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+}
+
+
+
+/* support에 대한 css(Support.css)*/
+.suggest_input {
+    height: 100px;
+}
+
+.FAQ {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.FAQ_content{
+    border: 1px solid;
+    height: 100px;
+}
+
+.suggest {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.suggets_submit {
+    text-align: center;
+    padding: 10px 50px;
+    background-color: #ddd;
+    margin-left: auto;
+    margin-right: 0;
+    
+}
+
+.support {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.support label{
+    font-size: 16px;
+}
