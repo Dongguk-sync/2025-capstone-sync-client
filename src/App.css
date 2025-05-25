@@ -3,6 +3,7 @@
   --color-sub: rgb(57, 150, 218);
   --color-point: rgb(255, 247, 216);
   --header-height: 70px;
+  --sidebar-width: 260px;
 }
  
 /* 글자 크기를 한번에 조정*/

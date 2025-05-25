@@ -77,28 +77,31 @@ export default function ChatLayout() {
 
   return (
     <div className="chat-layout">
-        {sidebarOpen && (
-        <aside className={`chat-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
-          <div className="chat-sidebar-header">
-            <p>Sessions</p>
-          </div>
-          <ChatSidebar
-        sessions={sessions}
-        currentId={currentId}
-        onSelect={setCurrentId}
-        onNew={handleNew}
-        onReset={handleReset}
-      />
-        </aside>
-      )}
+      {/* 사이드바가 열려있는 경우만 나타남 */}
+      <div className={`app-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+          <aside className="chat-sidebar">
+            <div className="chat-sidebar-header">
+              <p>Sessions</p>
+            </div>
+            <ChatSidebar
+              sessions={sessions}
+              currentId={currentId}
+              onSelect={setCurrentId}
+              onNew={handleNew}
+              onReset={handleReset}
+            />
+          </aside>
+      </div>
+          <button
+            className="sidebar-toggle-btn"
+            onClick={toggleSidebar}
+            aria-label={sidebarOpen ? '사이드바 닫기' : '사이드바 열기'}
+          >
+            {sidebarOpen ? <FaChevronLeft /> : <FaBars />}
+          </button>
+
       {/* 토글 버튼: 항상 보이도록 aside 바깥에 배치 */}
-      <button
-        className="sidebar-toggle-btn"
-        onClick={toggleSidebar}
-        aria-label={sidebarOpen ? '사이드바 닫기' : '사이드바 열기'}
-      >
-        {sidebarOpen ? <FaChevronLeft /> : <FaBars />}
-      </button>
+      
       
       <div className="chat-main">
         <ChatWindow session={currentSession} />

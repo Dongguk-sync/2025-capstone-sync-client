@@ -6,6 +6,7 @@ html, body, #root {
 
 /* 2. Make sure your top‐level layout fills the viewport & hides overflow */
 .chat-layout {
+  position: relative;
   display: flex;
   flex: 1;
   overflow: hidden; /* no scrolling on the outer container */
@@ -18,6 +19,11 @@ html, body, #root {
   flex-direction: column;
   flex: 1; 
   overflow: hidden; /* prevents this section from scrolling */
+  margin-left: 260px;
+}
+
+.app-sidebar.closed ~ .chat-main {
+  margin-left: 0;
 }
 
 /* 4. Let only the chat‐window grow & scroll its contents */
@@ -40,9 +46,9 @@ html, body, #root {
 
 /* 토글 버튼: 사이드바 옆, 항상 보여지게끔 */
 .sidebar-toggle-btn {
-  position: absolute;
-  top: 25px;
-  left: 170px;               /* 사이드바 너비 260px 만큼 이동 */
+  position: fixed;
+  top: 100px;
+  left: 180px; 
   z-index: 100;
   background: none;
   border: none;
@@ -51,10 +57,21 @@ html, body, #root {
   transition: left 0.3s ease;
 }
 
-/* 2) 사이드바가 닫혀 있으면, 다시 화면 좌측 상단 (16px) 으로 */
-.chat-sidebar.closed ~ .sidebar-toggle-btn {
+/* sidebar 가 closed 상태일 때만 버튼을 왼쪽으로 당기기 */
+/* .app-sidebar.closed + .sidebar-toggle-btn {
+  left: 100px;              
+} */
+
+/* 부모 .sidebar-closed 이 있을 때 */
+.app-layout.sidebar-closed .sidebar-toggle-btn {
   left: 16px;
 }
+/* 부모 .sidebar-open 이 있을 때 */
+.app-layout.sidebar-open .sidebar-toggle-btn {
+  left: 260px;
+}
+
+
 
 /* chat-layout 위치 참조를 위해 relative 지정 */
 .chat-layout {
@@ -66,7 +83,25 @@ html, body, #root {
 
 
 .chat-layout { display: flex; height: 100vh; font-family: 'Helvetica Neue', Arial, sans-serif;   padding: 0 10%; box-sizing: border-box; /* 패딩이 width 계산에 포함되도록 */ overflow: hidden; }
-.chat-sidebar { width: 260px; background: #D9D9D9; color: #fff; display: flex; flex-direction: column; }
+.app-sidebar { 
+  position: fixed;
+  top: var(--header-height);
+  bottom: 0;
+  width: 260px; 
+  background: #D9D9D9; 
+  color: #fff; 
+  display: flex; 
+  flex-direction: column; }
+
+  /* 열려 있을 땐 원위치 */
+.app-sidebar.open {
+  transform: translateX(0);
+}
+
+/* 닫혀 있을 땐 완전히 왼쪽 밖으로 밀어내서 화면에서 숨김 */
+.app-sidebar.closed {
+  display: none;
+}
 .chat-sidebar-header { display: flex; align-items: center; margin-left: 35px; padding: 10px;}
 .chat-sidebar-header .icon { margin-right: 10px; cursor: pointer; }
 .sidebar-actions { border-top: 1px dotted #333; display: flex; flex-direction: column; padding: 10px; }
@@ -93,7 +128,19 @@ html, body, #root {
 .suggestion-card p { font-weight: regular; margin-bottom: 8px; color: #939393; }
 .suggestion-card blockquote { font-weight: regular; margin: 0; padding: 12px; background: #F7F9FB; color: #939393; font-size: 14px; }
 .chat-input-container {  display: flex; align-items: stretch; flex: 0 0 auto; position: fixed; bottom: 0; padding: 10px 16px; border-top: 1px solid #eee; }
-.chat-input { flex: 1; resize: none; overflow: hidden; padding: 10px 14px; width: 800px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; font-family: 'Helvetica Neue', Arial, sans-serif; }
+.chat-input { 
+  position:fixed;
+  bottom: 10px;
+  left: 500px;
+  right: 0;
+  resize: none; 
+  overflow: hidden; 
+  padding: 10px 14px;  
+  border: 1px solid #ccc; 
+  border-radius: 6px; 
+  font-size: 0.9rem; 
+  font-family: 'Helvetica Neue', Arial, sans-serif; }
+
 .chat-input:focus { outline: none; border-color: #939393; }
 .send-button { margin-left: 8px; padding: 10px 14px; height: flex; background: #939393; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
 .send-button:hover { background: #25365F; }
