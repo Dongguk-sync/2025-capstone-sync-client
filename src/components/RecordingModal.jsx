@@ -5,7 +5,7 @@ import recordIcon from '../assets/record.jpg';
 export default function RecordingModalContent({ recording, startRecording, stopRecording, studyItem }) {
   return (
     <>
-      <h2>{studyItem?.title || '학습 시작'}</h2>
+      <h2>{studyItem?.materialTitle || '학습 시작'}</h2>
       <div className="record_img">
         <button onClick={recording ? stopRecording : startRecording}>
           <img src={recordIcon} alt="녹음" className="profile_icon" />

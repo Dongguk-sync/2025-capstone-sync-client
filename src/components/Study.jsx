@@ -1,5 +1,5 @@
 import {FaTrash} from 'react-icons/fa'
-import "./Calender.css";
+import "./Calendar.css";
 
 const Study =({schedules, onDelete, onStartStudy})=>{
     if(!schedules || schedules.length === 0){
@@ -13,8 +13,9 @@ const Study =({schedules, onDelete, onStartStudy})=>{
     return (
         <div className="StudyList">
           {schedules.map(item => (
+            
             <div className="StudySche" key={item.id}>
-            <div className="StudyTitle">{item.title}</div>
+            <div className="StudyTitle">{item.subjectName} - {item.materialTitle}</div>
             <div className="StudyBtns">
             <button onClick={() => onStartStudy(item)} className="StudyBtn">
               학습하기

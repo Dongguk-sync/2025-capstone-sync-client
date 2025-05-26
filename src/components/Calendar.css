@@ -6,7 +6,7 @@
     gap:20px;
 }
 
-.calender {
+.calendar {
     flex:1;
     /* box-shadow: 1px 1px 10px 0 var(--color-main);
     border-radius: 20px; */
@@ -48,6 +48,11 @@
 
 .cell-date{
     text-align: start;
+}
+
+.exam-count{
+    font-size: 0.8rem;
+    background-color: var(--color-sub);
 }
 
 .cell-count {
@@ -98,7 +103,7 @@
 
 
 /* 오른쪽 Study.css에 대한 부분 */
-.StudySche{
+.StudySche, .ExamItem{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -135,4 +140,29 @@
     border-radius: 8px;
     background-color: var(--color-main);
     color: var(--color-point);
+}
+
+.multiple-exams{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background-color: var(--color-point);
+    border-radius: 20px;
+    padding: 10px;
+
+}
+
+.noExam{
+    display: none;
+}
+
+.testIcon{
+    width: 20px;
+}
+
+.ExamTitle{
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
 }

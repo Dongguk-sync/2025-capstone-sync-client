@@ -1,6 +1,6 @@
 import Header from "../components/Header"
 import Footer from "../components/Footer"
-import Calender from "../components/Calender"
+import Calendar from "../components/Calendar"
 import Notice from "../components/Noitce"
 import Modal from "../components/Modal"
 import {useState, useRef, useEffect} from 'react';
@@ -15,6 +15,9 @@ import MaterialSearch from "../components/MaterialSearch";
 // import { getStudiesByDate, saveStudy } from '../data/mockStudyService';
 import { getSchedulesInRange as getStudiesByDate, saveSchedule as saveStudy } from "../data/mockStudyService";
 import { format } from 'date-fns';
+import { saveExams, getExamsByDate } from '../data/mockExamService'
+
+
 
 
 export default function MainPage() {
@@ -43,7 +46,7 @@ export default function MainPage() {
   const [reminder, setReminder] = useState(false);
 
   // 학습 등록하면 바로 달력에 반영되도록
-  // const [reloadCalendar, set]
+  const [reloadCalendar, setReloadCalendar] = useState(0);
   const [schedules, setSchedules] = useState([]);
 
 //  const refreshSchedules = async () => {
@@ -65,7 +68,7 @@ export default function MainPage() {
 
 
 
-  // Calender → MainPage로, +학습추가 클릭
+  // Calendar → MainPage로, +학습추가 클릭
   const handleAddStudy = () => {
     setStudyItem(null);      // 새로 추가할 땐 아이템 정보 비움
     setSubject(null);
@@ -83,14 +86,11 @@ export default function MainPage() {
 
   const handleAddExam = () => {
     setStudyItem(null);
+    setExamTitle(null);
     setSubject(null);
-    setMaterial(null);
     setReminder(false);
+    setSelectedDate(new Date());
     openModal('addExam');
-  }
-
-  const onClickRecord = () => {
-    setShowRecordingModal(true)
   }
 
   const handleAddStudySubmit = async () => {
@@ -98,7 +98,6 @@ export default function MainPage() {
       alert('과목과 교안을 선택해주세요.');
       return;
     }
-    // setLoading(true);
     try {
       // 실제 API 와 연결하면 실행
       // const res = await fetch('/api/studies', {
@@ -127,6 +126,56 @@ export default function MainPage() {
       const dateStr = selectedDate.toISOString().slice(0,10);
       const list = await getStudiesByDate(dateStr);
       setSchedules(list);
+      setReloadCalendar(n=>n+1);
+    } catch (e) {
+      console.error(e);
+      alert('저장 중 오류가 발생했습니다.');
+    } finally {
+      // setLoading(false);
+    }
+  };
+
+  // 시험 추가에 대한 부분
+  const [examTitle, setExamTitle] = useState('');
+  // const [autoCreateExam, setAutoCreateExam] = useState(false);
+  // const [examReminder, setExamReminder] = useState(false);
+
+
+  const handleAddExamSubmit = async () => {
+    if (!examTitle.trim() || !subject) {
+      alert('시험명을 입력하고 과목을 선택해주세요.');
+      return;
+    }
+    // setLoading(true);
+    try {
+      // 실제 API 와 연결하면 실행
+      // const res = await fetch('/api/studies', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({
+      //     date: selectedDate.toISOString().slice(0,10),
+      //     subjectId: subject.id,
+      //     materialId: material.id,
+      //     reminder: reminder
+      //   })
+      // });
+      // if (!res.ok) throw new Error('저장 실패');
+      // await res.json();
+      // goBackModal();           // 모달 닫기
+      // refreshSchedules();      // 캘린더 새로고침
+      await saveExams({
+        date: format(selectedDate, 'yyyy-MM-dd'),
+        title: examTitle,
+        subjectId: subject.id,
+        subjectName: subject.name,
+        reminder
+      });
+      goBackModal();
+
+      const dateStr = selectedDate.toISOString().slice(0,10);
+      const exams = await getExamsByDate(dateStr);
+      setSchedules(exams);
+      setReloadCalendar(n=>n+1);
     } catch (e) {
       console.error(e);
       alert('저장 중 오류가 발생했습니다.');
@@ -194,10 +243,12 @@ export default function MainPage() {
       <Header />
       <Notice />
       <div className="cal_todo">
-        <Calender 
+        <Calendar 
           onAddStudy={handleAddStudy}
           onStartStudy={handleStartStudy}
           onAddExam={handleAddExam}
+          reloadTrigger={reloadCalendar}
+          onReload={()=> setReloadCalendar(n=>n+1)}
         />
       </div>
       <Footer />
@@ -214,9 +265,10 @@ export default function MainPage() {
         {/* 학습 시작 모달 */}
         {currentModal === 'startRecord' && currentStudyItem && (
           <>
-            <h2>{currentStudyItem.title}</h2>
+            <h2>{currentStudyItem.subjectName} - {currentStudyItem.materialTitle}</h2>
             <div className="record_img">
-              <button onClick={onClickRecord}>
+              <button 
+                onClick={() => openModal('Recording')}>
                 <img 
                     src={record} alt="record" className="profile_icon"
                 />
@@ -300,6 +352,8 @@ export default function MainPage() {
                   <input 
                     type="text"
                     placeholder="시험명을 입력하세요"
+                    value={examTitle ?? ''}
+                    onChange={e => setExamTitle(e.target.value)}
                   />
                 </div>
 
@@ -330,6 +384,7 @@ export default function MainPage() {
               </div>
               <button 
                 className="AddStudySubmit"
+                onClick={handleAddExamSubmit}
               >등록
               </button>
             </div>
@@ -379,31 +434,29 @@ export default function MainPage() {
             </div> 
           </div>
         )}
-      </Modal>
-      
-      {/* 실제 녹음 중 모달 창 */}
-      <Modal 
-        className={`modal-content ${modalStack}`}
-        overlayClassName="modal-overlay"
-        isOpen={showRecordingModal} 
-        onClose={() => setShowRecordingModal(false)}
-        >
-        <RecordingModal
-          isOpen={ showRecordingModal }
-          onClose={()=> setShowRecordingModal(false)}
-          studyItem={currentStudyItem}
-          recording={recording}
-          startRecording={startRecording}
-          stopRecording={stopRecording}
-        />
 
-        {audioUrl && (
-          <div>
-            <h4>녹음 미리 듣기</h4>
-            <audio src={audioUrl} controls />
-          </div>
+        {/* 실제 녹음 중 모달 창 */}
+        {currentModal === 'Recording' && (
+          <>
+            <RecordingModal
+              isOpen={ showRecordingModal }
+              onClose={()=> setShowRecordingModal(false)}
+              studyItem={currentStudyItem}
+              recording={recording}
+              startRecording={startRecording}
+              stopRecording={stopRecording}
+            />
+
+            {audioUrl && (
+              <div>
+                <h4>녹음 미리 듣기</h4>
+                <audio src={audioUrl} controls />
+              </div>
+            )}
+          </>
         )}
-        </Modal>
+
+      </Modal>
     </div>
   )
 }
