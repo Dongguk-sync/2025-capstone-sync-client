@@ -5,7 +5,7 @@ import Notice from "../components/Noitce"
 import Modal from "../components/Modal"
 import {useState, useRef, useEffect} from 'react';
 import "./MainPage.css";
-import record from "../assets/record.jpg";
+import record from "../assets/record.png";
 import DatePicker from "../components/DatePicker"
 import OnOffToggle from "../components/OnOff";
 import RecordingModal from "../components/RecordingModal"
@@ -28,7 +28,7 @@ export default function MainPage() {
   const [selectedDate, setSelectedDate]             = useState(new Date())
 
   // 녹음 상태 & refs
-  const [recording, setRecording] = useState(false)
+  const [recording, setRecording] = useState(true)
   const mediaRecorderRef          = useRef(null)
   const audioChunksRef            = useRef([])
 
@@ -49,6 +49,9 @@ export default function MainPage() {
   const [reloadCalendar, setReloadCalendar] = useState(0);
   const [schedules, setSchedules] = useState([]);
 
+  const [mode, setMode] = useState('study');
+
+
 //  const refreshSchedules = async () => {
 //     const dateStr = selectedDate.toISOString().slice(0, 10);
 //     const list = await getStudiesByDate(dateStr);
@@ -64,6 +67,10 @@ export default function MainPage() {
       const next = stack.slice(0, -1);
       return next;
     })
+  }
+
+  function closeModal() {
+    setModalStack([]);
   }
 
 
@@ -224,7 +231,7 @@ export default function MainPage() {
 
     mediaRecorderRef.current.start();
     setRecording(true);
-  } catch(err){
+    } catch(err){
       console.error('마이크 권한 오류:', err);
       alert('녹음 권한이 필요합니다.');
   }
@@ -259,8 +266,10 @@ export default function MainPage() {
         className={`modal-content ${modalStack}`}
         overlayClassName="modal-overlay"
         isOpen={modalStack.length > 0} 
-        onClose={goBackModal}
+        onClose={closeModal}
         >
+
+         
 
         {/* 학습 시작 모달 */}
         {currentModal === 'startRecord' && currentStudyItem && (
@@ -273,6 +282,8 @@ export default function MainPage() {
                     src={record} alt="record" className="profile_icon"
                 />
               </button>
+              <div>학습을 시작하려면 누르세요.</div>
+              <div>녹음이 바로 시작됩니다.</div>
             </div>
           </>
         )}
@@ -317,14 +328,15 @@ export default function MainPage() {
                 </div>
                 <button 
                   className="SelectMeterial-btn"
+                  disabled={!subject}
                   onClick={() => openModal('searchMaterial')}
                 >교안선택</button>
                 
               </div>
-              <div className="Alarm">
+              {/* <div className="Alarm">
                 <label>학습 알림</label>
                 <OnOffToggle />
-              </div>
+              </div> */}
               <button 
                 className="AddStudySubmit"
                 onClick={handleAddStudySubmit}
@@ -372,7 +384,7 @@ export default function MainPage() {
                   onClick={() => openModal('searchSubject')}
                   >과목 선택</button>
               </div>
-              <div>
+              {/* <div>
                 <div className="Alarm">
                   <label>시험 전 학습 자동 생성</label>
                   <OnOffToggle />
@@ -381,7 +393,7 @@ export default function MainPage() {
                   <label>학습 알림</label>
                   <OnOffToggle />
                 </div>
-              </div>
+              </div> */}
               <button 
                 className="AddStudySubmit"
                 onClick={handleAddExamSubmit}
@@ -437,7 +449,7 @@ export default function MainPage() {
 
         {/* 실제 녹음 중 모달 창 */}
         {currentModal === 'Recording' && (
-          <>
+          <div>
             <RecordingModal
               isOpen={ showRecordingModal }
               onClose={()=> setShowRecordingModal(false)}
@@ -453,7 +465,7 @@ export default function MainPage() {
                 <audio src={audioUrl} controls />
               </div>
             )}
-          </>
+          </div>
         )}
 
       </Modal>

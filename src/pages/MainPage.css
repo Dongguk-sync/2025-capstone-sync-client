@@ -13,11 +13,16 @@
     display: flex;
     justify-content: center;
     height: 100px;
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+    color: gray;
 }
 
-.record_img img {
-    width: 70px;
-    height: 70px;
+.profile_icon {
+    width: 80px;
+    height: 80px;
+    padding: 20px;
 }
 
 .AddStudy p, .AddExam p{
@@ -121,4 +126,41 @@
 .search_btn{
     border: 1px solid;
     padding: 5px;
+}
+
+/* 실제 녹음진행되는 모달창 */
+.recordingModal {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.RecordingButtons{
+    display: inline-flex;
+    justify-content: center;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.Submit_btn, .Restart_btn{
+    display: inline-block;
+    width: auto;
+    padding: 5px 30px;
+    border-radius: 10px;
+}
+
+.Submit_btn{
+    background-color: #E84A5F;
+    color: white;
+}
+
+.Restart_btn{
+    background-color: #B3B3B3;
+
+}
+
+.recording_message{
+    color: gray;
+    font-size: 0.8rem;
 }

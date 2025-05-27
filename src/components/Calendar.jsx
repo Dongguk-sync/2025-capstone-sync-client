@@ -172,17 +172,19 @@ const Calendar = ({ onAddStudy, onStartStudy, onAddExam, reloadTrigger, onReload
             onClick={() => setSelectedDate(clone)}
           >
             <div className="cell-date">{format(clone, 'd')}</div>
-          {exams.length > 0 &&(
-            <div className="exam-count">
-              시험 {exams.length}개
-            </div>
-          )}
+            <div className="total_sche">
+              {exams.length > 0 &&(
+                <div className="exam-count">
+                  시험 {exams.length}개
+                </div>
+              )}
 
-          {events.length > 0 && (
-            <div className="cell-count">
-              학습 {events.length}개
+              {events.length > 0 && (
+                <div className="cell-count">
+                  학습 {events.length}개
+                </div>
+              )}
             </div>
-          )}
 
 
           </div>
