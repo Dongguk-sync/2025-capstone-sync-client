@@ -10,7 +10,7 @@ import testImage from "../assets/test.png";
 
 
 
-const Calendar = ({ onAddStudy, onStartStudy, onAddExam, reloadTrigger, onReload }) => {
+const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [monthSchedules, setMonthSchedules] = useState({});
@@ -214,8 +214,9 @@ const Calendar = ({ onAddStudy, onStartStudy, onAddExam, reloadTrigger, onReload
                 <div className="detailDate">
                     {format(selectedDate, 'MM월 dd일')}
                     <div className="addDetail">
-                        <button onClick={()=>onAddStudy()} className="StudyButton">+ 학습추가</button>
-                        <button onClick={()=>onAddExam()} className="StudyButton">+ 시험추가</button>
+                        {/* <button onClick={()=>onAddStudy()} className="StudyButton">+ 학습추가</button>
+                        <button onClick={()=>onAddExam()} className="StudyButton">+ 시험추가</button> */}
+                        <button onClick={()=>onAddSchedule()} className="StudyButton">+ 일정추가</button>
                     </div>
                 </div>
                 {/* 1) 시험 일정 */}

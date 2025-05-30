@@ -16,7 +16,8 @@ import MaterialSearch from "../components/MaterialSearch";
 import { getSchedulesInRange as getStudiesByDate, saveSchedule as saveStudy } from "../data/mockStudyService";
 import { format } from 'date-fns';
 import { saveExams, getExamsByDate } from '../data/mockExamService'
-
+import AddStudy from "../components/AddStudyModal";
+import AddExam from "../components/AddExamModal";
 
 
 
@@ -28,7 +29,7 @@ export default function MainPage() {
   const [selectedDate, setSelectedDate]             = useState(new Date())
 
   // 녹음 상태 & refs
-  const [recording, setRecording] = useState(true)
+  const [recording, setRecording] = useState(false)
   const mediaRecorderRef          = useRef(null)
   const audioChunksRef            = useRef([])
 
@@ -59,7 +60,10 @@ export default function MainPage() {
 //  }
 
   function openModal(type) {
-    setModalStack(stack => [...stack, type]);
+    setModalStack(prev =>{
+      const base = Array.isArray(prev) ? prev : [];
+      return [...base, type];
+    })
   }
 
   function goBackModal() {
@@ -74,6 +78,15 @@ export default function MainPage() {
   }
 
 
+  // 일정추가 버튼 클릭시 (학습, 시험 일정 통합하여 추가)
+  const handleAddSchedule = () => {
+    setStudyItem(null);
+    setSubject(null);
+    setMaterial(null);
+    setReminder(null);
+    setSelectedDate(new Date());
+    openModal('addSchedule');
+  }
 
   // Calendar → MainPage로, +학습추가 클릭
   const handleAddStudy = () => {
@@ -252,6 +265,7 @@ export default function MainPage() {
       <div className="cal_todo">
         <Calendar 
           onAddStudy={handleAddStudy}
+          onAddSchedule={handleAddSchedule}
           onStartStudy={handleStartStudy}
           onAddExam={handleAddExam}
           reloadTrigger={reloadCalendar}
@@ -288,6 +302,61 @@ export default function MainPage() {
           </>
         )}
 
+        {/* 일정 추가 모달 */}
+        {currentModal === 'addSchedule' && (
+          <div className="AddStudy">
+            <p>{mode === 'study' ? '학습' : '시험'} 일정을 등록해주세요</p>
+            <div className="AddStudyDiv">
+              <div className="AddStudyDiv"> 
+                {/* 날짜 선택하는 공통 부분 */}
+                <div className="AddStudyDate">              
+                  <label>날짜</label>
+                  <DatePicker 
+                    selected={selectedDate}
+                    onChange={setSelectedDate}/>
+                </div>
+              </div>
+              <div className="right_content">
+                <div className="toggle_btn">
+                  <button
+                    className={mode==='study'? 'active': ''}
+                    onClick={()=> {
+                      setMode('study')}}>
+                      학습추가
+                  </button>
+                  <button
+                    className={mode==='exam'? 'active' : ''}
+                    onClick={()=>{
+                      setMode('exam')}}>
+                    시험추가
+                    </button>
+                </div>
+                {/* mode에 따라 study추가인지, Exam추가인지 렌더링 */}
+                <div className="studyORexam">
+                  {mode === 'study'?
+                    <AddStudy 
+                      selectedDate={selectedDate}
+                      subject={subject}
+                      material={material}
+                      onSubjectSelect={() => openModal('searchSubject')}
+                      onMaterialSelect={()=> openModal('searchMaterial')}
+                      onSubmit={handleAddStudySubmit}
+                      />
+                    :
+                    <AddExam 
+                      selectedDate={selectedDate}
+                      examTitle={examTitle}
+                      subject={subject}
+                      setExamTitle={t => setExamTitle(t)}
+                      onSubjectSelect={() => openModal('searchSubject')}
+                      onSubmit={handleAddExamSubmit}
+                    />}
+                  </div>
+                </div>
+              </div>
+          </div>
+        )}
+
         {/* 학습 추가 모달 */}
         {currentModal === 'addStudy' && (
           <div className="AddStudy">
@@ -299,7 +368,8 @@ export default function MainPage() {
                 selected={selectedDate}
                 onChange={setSelectedDate}/>
             </div>
-            <div className="AddStudyDetail">
+            {/* AddStudyModal.jsx로 분리 */}
+            {/* <div className="AddStudyDetail">
               <div className="SelectSubject">
                 <div className="SelectSubject-row">
                   <label>과목</label>
@@ -337,12 +407,12 @@ export default function MainPage() {
                 <label>학습 알림</label>
                 <OnOffToggle />
               </div> */}
-              <button 
+              {/* <button 
                 className="AddStudySubmit"
                 onClick={handleAddStudySubmit}
               >등록
               </button>
-            </div>
+            </div> */}
             </div>
           </div>
         )}
@@ -358,7 +428,7 @@ export default function MainPage() {
                   selected={selectedDate}
                   onChange={setSelectedDate}/>
               </div>
-              <div className="AddExamDetail">
+              {/* <div className="AddExamDetail">
                 <div className="AddExamTitle">
                   <label>시험명</label>
                   <input 
@@ -394,12 +464,12 @@ export default function MainPage() {
                   <OnOffToggle />
                 </div>
               </div> */}
-              <button 
+              {/* <button 
                 className="AddStudySubmit"
                 onClick={handleAddExamSubmit}
               >등록
               </button>
-            </div>
+              </div> */}
             </div>
           </div>
         )}
