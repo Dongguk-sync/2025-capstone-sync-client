@@ -219,22 +219,30 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
                         <button onClick={()=>onAddSchedule()} className="StudyButton">+ 일정추가</button>
                     </div>
                 </div>
-                {/* 1) 시험 일정 */}
-                <div className={`examSection ${examSchedules.length > 0 ? 'multiple-exams': ''}`}>
-                  {examSchedules.length > 0 ? (
-                    examSchedules.map(ex => (
+    
+                {examSchedules.length > 0 && (
+                  <div className="examSection">
+                    {/* 라벨 */}
+                    <div className="examLabel">시험 일정</div>
+                    {/* 각 시험 항목 */}
+                    {examSchedules.map(ex => (
                       <div key={ex.id} className="ExamItem">
                         <div className="ExamTitle">
-                          <img src={testImage} className="testIcon"/>
-                          <div>{ex.title}</div>
+                          <img src={testImage} className="testIcon" alt="" />
+                          <span>{ex.title}</span>
                         </div>
-                        <button onClick={() => handleExamDelete(ex.id)} aria-label="삭제">
+                        <button
+                          onClick={() => handleExamDelete(ex.id)}
+                          aria-label="삭제"
+                        >
                           <FaTrash size={14} />
                         </button>
                       </div>
-                    ))
-                  ): (<div className="noExam"></div>)}
-                </div>
+                    ))}
+                  </div>
+                )}
+
+
                 <div>
                   <Study 
                     schedules={dailySchedules}

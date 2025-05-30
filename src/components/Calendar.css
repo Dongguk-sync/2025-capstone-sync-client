@@ -77,6 +77,8 @@
     flex-direction: column;
     gap: 5px;
     padding: 10px;
+    overflow-y: auto;
+    
 }
 
 .detailDate{
@@ -122,7 +124,7 @@
     padding: 10px;
 
 }
-
+/* 
 .StudyList{
     display: flex;
     flex-direction: column;
@@ -130,6 +132,37 @@
     border: 1px solid gray;
     border-radius: 20px;
     padding: 5px;
+} */
+
+.studySection {
+  background: #f7f7f7;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.studyLabel {
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  color: #333;
+}
+
+
+.StudyItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.StudyItem:last-child {
+  border-bottom: none;
+}
+
+.StudyTitle {
+  font-size: 0.95rem;
+  color: #444;
 }
 
 /* 학습하기 버튼 */
@@ -142,14 +175,13 @@
     color: var(--color-point);
 }
 
-.multiple-exams{
+.examSchedule{
     display: flex;
     flex-direction: column;
     gap: 5px;
     background-color: var(--color-point);
     border-radius: 20px;
     padding: 10px;
-
 }
 
 .noExam{
@@ -171,4 +203,46 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+}
+
+/* 전체 박스 */
+.examSection {
+  background: var(--color-point);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* 라벨 */
+.examLabel {
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* 각 시험 항목 */
+.ExamItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+/* 마지막 항목은 구분선 제거 */
+.ExamItem:last-child {
+  border-bottom: none;
+}
+
+/* 아이콘 + 제목 영역 */
+.ExamTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 시험 아이콘 */
+.testIcon {
+  width: 20px;
+  height: 20px;
 }

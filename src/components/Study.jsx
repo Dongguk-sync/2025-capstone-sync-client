@@ -11,21 +11,21 @@ const Study =({schedules, onDelete, onStartStudy})=>{
     }
     
     return (
-        <div className="StudyList">
-          {schedules.map(item => (
-            
-            <div className="StudySche" key={item.id}>
-            <div className="StudyTitle">{item.subjectName} - {item.materialTitle}</div>
-            <div className="StudyBtns">
-            <button onClick={() => onStartStudy(item)} className="StudyBtn">
-              학습하기
-            </button>
-            <button onClick={() => onDelete(item.id)} aria-label="삭제">
-              <FaTrash size={14} />
-            </button>
-          </div>
-        </div>
-      ))}
+          <div className="studySection">
+            <div className="studyLabel">학습 일정</div>
+            {schedules.map(item => (
+            <div className="StudyItem" key={item.id}>
+              <div className="StudyTitle">{item.subjectName} - {item.materialTitle}</div>
+              <div className="StudyBtns">
+                <button onClick={() => onStartStudy(item)} className="StudyBtn">
+                  학습하기
+                </button>
+                <button onClick={() => onDelete(item.id)} aria-label="삭제">
+                  <FaTrash size={14} />
+                </button>
+              </div>
+            </div>
+            ))}
     </div>
     )
 };
