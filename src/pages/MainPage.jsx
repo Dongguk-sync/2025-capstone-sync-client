@@ -317,7 +317,7 @@ export default function MainPage() {
                 </div>
               </div>
               <div className="right_content">
-                <div className="toggle_btn">
+                <div className="toggle-btn">
                   <button
                     className={mode==='study'? 'active': ''}
                     onClick={()=> {
@@ -354,123 +354,6 @@ export default function MainPage() {
                   </div>
                 </div>
               </div>
-          </div>
-        )}
-
-        {/* 학습 추가 모달 */}
-        {currentModal === 'addStudy' && (
-          <div className="AddStudy">
-            <p>학습 일정을 등록해주세요</p>
-            <div className="AddStudyDiv"> 
-            <div className="AddStudyDate">              
-              <label>날짜</label>
-              <DatePicker 
-                selected={selectedDate}
-                onChange={setSelectedDate}/>
-            </div>
-            {/* AddStudyModal.jsx로 분리 */}
-            {/* <div className="AddStudyDetail">
-              <div className="SelectSubject">
-                <div className="SelectSubject-row">
-                  <label>과목</label>
-                  <input
-                    type="text"
-                    value={subject?.name || ''}
-                    readOnly
-                    placeholder="과목 선택"
-                  />
-                </div>
-                <button 
-                  className="SelectSubject-btn"
-                  onClick={() => openModal('searchSubject')}
-                  >과목 선택</button>
-                
-              </div>
-              <div className="SelectMeterial">
-                <div className="SelectMeterial-row">
-                  <label>교안</label>
-                  <input
-                    type="text"
-                    value={material?.title || ''}
-                    readOnly
-                    placeholder="교안 선택"
-                  />
-                </div>
-                <button 
-                  className="SelectMeterial-btn"
-                  disabled={!subject}
-                  onClick={() => openModal('searchMaterial')}
-                >교안선택</button>
-                
-              </div>
-              {/* <div className="Alarm">
-                <label>학습 알림</label>
-                <OnOffToggle />
-              </div> */}
-              {/* <button 
-                className="AddStudySubmit"
-                onClick={handleAddStudySubmit}
-              >등록
-              </button>
-            </div> */}
-            </div>
-          </div>
-        )}
-
-        {/* 시험 추가 모달 */}
-        {currentModal === 'addExam' && (
-          <div className="AddExam">
-            <p>시험 일정을 등록해주세요</p>        
-            <div className="AddExamDiv"> 
-              <div className="AddExamDate">              
-                <label>날짜</label>
-                <DatePicker 
-                  selected={selectedDate}
-                  onChange={setSelectedDate}/>
-              </div>
-              {/* <div className="AddExamDetail">
-                <div className="AddExamTitle">
-                  <label>시험명</label>
-                  <input 
-                    type="text"
-                    placeholder="시험명을 입력하세요"
-                    value={examTitle ?? ''}
-                    onChange={e => setExamTitle(e.target.value)}
-                  />
-                </div>
-
-                <div className="SelectSubject">
-                  <div className="SelectSubject-row">
-                    <label>과목</label>
-                    <input
-                      type="text"
-                      value={subject?.name || ''}
-                      readOnly
-                      placeholder="과목 선택"
-                    />
-                  </div>
-                <button 
-                  className="SelectSubject-btn"
-                  onClick={() => openModal('searchSubject')}
-                  >과목 선택</button>
-              </div>
-              {/* <div>
-                <div className="Alarm">
-                  <label>시험 전 학습 자동 생성</label>
-                  <OnOffToggle />
-                </div>
-                <div className="Alarm">
-                  <label>학습 알림</label>
-                  <OnOffToggle />
-                </div>
-              </div> */}
-              {/* <button 
-                className="AddStudySubmit"
-                onClick={handleAddExamSubmit}
-              >등록
-              </button>
-              </div> */}
-            </div>
           </div>
         )}
 
@@ -537,7 +420,6 @@ export default function MainPage() {
             )}
           </div>
         )}
-
       </Modal>
     </div>
   )
