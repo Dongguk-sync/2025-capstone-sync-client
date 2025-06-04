@@ -33,6 +33,9 @@ export default function RecordingModalContent({
       });
       if (!res.ok) throw new Error(`CSR error ${res.status}`);
       const json = await res.json();
+
+      console.log('[CSR 응답]', json);
+
       const text = json.text || json.recognitionResult?.[0]?.transcript || '';
       setTranscript(text);
     } catch (e) {

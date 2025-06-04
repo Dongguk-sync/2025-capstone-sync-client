@@ -9,6 +9,7 @@ import record from "../assets/record.png";
 import DatePicker from "../components/DatePicker"
 import OnOffToggle from "../components/OnOff";
 import RecordingModal from "../components/RecordingModal"
+import RecordingModal1 from "../components/RecordingModal1";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import SubjectSearch from "../components/SubjectSearch";
 import MaterialSearch from "../components/MaterialSearch";
@@ -19,6 +20,8 @@ import { saveExams, getExamsByDate } from '../data/mockExamService'
 import AddStudy from "../components/AddStudyModal";
 import AddExam from "../components/AddExamModal";
 
+// token 관리
+// import instance from '../api/axios';
 
 
 export default function MainPage() {
@@ -403,7 +406,7 @@ export default function MainPage() {
         {/* 실제 녹음 중 모달 창 */}
         {currentModal === 'Recording' && (
           <div>
-            <RecordingModal
+            <RecordingModal1
               isOpen={ showRecordingModal }
               onClose={()=> setShowRecordingModal(false)}
               studyItem={currentStudyItem}
