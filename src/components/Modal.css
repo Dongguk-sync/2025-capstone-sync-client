@@ -19,6 +19,7 @@
   min-width: 60%;
   z-index: 1001;
   /* overflow: visible; // 달력 팝업이 넘쳐도 보이게 */
+  min-height: 40%;
 }
 
 .modal-close {
