@@ -14,6 +14,7 @@ import EyeoffIcon from '../assets/eyeoff.png';
 import './SlidePage.css';
 
 export default function LoginPage() {
+  console.log("Login 렌더됨");
   const [email, setEmail] = useState('');               // 이메일 입력 상태
   const [password, setPassword] = useState('');         // 비밀번호 입력 상태
   const [showPassword, setShowPassword] = useState(false);
@@ -38,14 +39,13 @@ const GoogleLogin = () => {
 
     /* 일반 로그인 버튼 클릭 시 호출되는 함수 */
   const handleLogin = async (e) => {
+    console.log('handleSubmit진입');
     e.preventDefault();
     setErrorMsg('');
 
     try {
       // 1) 백엔드 로그인 API 호출 (URL을 실제 엔드포인트로 교체)
-      const res = await api.post(
-        'http://localhost:8080/api/login',
-        {
+      const res = await api.post('/login', {
           // 백엔드가 기대하는 필드 구조일 것
           user_email: email.trim(),
           user_password: password,
@@ -62,9 +62,23 @@ const GoogleLogin = () => {
 
       // 2) 로그인 성공 시 응답 예시: { token: "eyJhbGc...", user: { ... } }
       const token = res.data.content?.access_token;
-      if (token) {
+      const userId = res.data.content?.user_id;
+      const userEmail = res.data.content?.user_email;
+
+
+         console.log('■ 서버로부터 받은 값 ■');
+        console.log('token:', token);
+        console.log('userId:', userId);
+        console.log('userEmail:', userEmail);
+        console.log('───────────────');
+
+
+      if (token && userId && userEmail) {
         // 3) 받은 토큰을 localStorage(또는 쿠키)에 저장
         localStorage.setItem('accessToken', token);
+        localStorage.setItem('userId', String(userId));
+        localStorage.setItem('userEmail', userEmail);
+
 
         // 4) 로그인 성공 후 메인 페이지로 이동
         navigate('/main');
@@ -99,7 +113,7 @@ const GoogleLogin = () => {
             계정이 없으신가요? <Link to="/signup">Signup</Link>
           </div>
 
-          <h2 className="auth-form__title"><Link to="/main">로그인</Link></h2>
+          <h2 className="auth-form__title">로그인</h2>
           <p className="auth-form__subtitle">이메일과 비밀번호를 입력하세요</p>
           
           {/* 에러 메세지 */}
@@ -161,6 +175,11 @@ const GoogleLogin = () => {
             >Login</button>
 
           </form>
+
+
+
+
+
 
           <div className="auth-form__divider">
             <span>or continue with</span>
