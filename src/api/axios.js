@@ -205,38 +205,3 @@ export async function getAllUsers() {
 // default export로 인스턴스도 함께 내보내서,
 // 직접 instance.get/post 형식으로 호출해야 하는 경우에도 사용 가능
 export default instance;
-
-
-
-
-// import axios from 'axios';
-
-// const instance = axios.create({
-//   baseURL: 'http://localhost:8080/api',
-//   headers: {
-//     'Content-Type' : 'application/json',
-//   }
-// });
-
-// // 요청(Request) 인터셉터로 토큰 자동 추가 (공개 경로 분기 포함)
-// instance.interceptors.request.use(
-//   (config) => {
-//     const publicPaths = ['/api/login', '/api/signup', '/api/refresh-token'];
-
-//     // 요청 URL이 공개 경로 중 하나로 끝나면 헤더 붙이지 않음
-//     if (publicPaths.some((path) => config.url.endsWith(path))) {
-//       return config;
-//     }
-
-//     // 그 외 요청에는 저장된 accessToken을 붙인다
-//     const token = localStorage.getItem('accessToken');
-//     if (token) {
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
-
-// export default instance;
-

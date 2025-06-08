@@ -20,6 +20,8 @@ import { saveExams, getExamsByDate } from '../data/mockExamService'
 import AddStudy from "../components/AddStudyModal";
 import AddExam from "../components/AddExamModal";
 
+import { saveExam } from "../api/examService";
+
 // token 관리
 // import instance from '../api/axios';
 
@@ -169,33 +171,18 @@ export default function MainPage() {
       alert('시험명을 입력하고 과목을 선택해주세요.');
       return;
     }
-    // setLoading(true);
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
     try {
-      // 실제 API 와 연결하면 실행
-      // const res = await fetch('/api/studies', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     date: selectedDate.toISOString().slice(0,10),
-      //     subjectId: subject.id,
-      //     materialId: material.id,
-      //     reminder: reminder
-      //   })
-      // });
-      // if (!res.ok) throw new Error('저장 실패');
-      // await res.json();
-      // goBackModal();           // 모달 닫기
-      // refreshSchedules();      // 캘린더 새로고침
-      await saveExams({
-        date: format(selectedDate, 'yyyy-MM-dd'),
+      const saveRes = await saveExam({
+        date: dateStr,
         title: examTitle,
         subjectId: subject.id,
         subjectName: subject.name,
-        reminder
       });
       goBackModal();
+      console.log('SAVE RESPONSE ', saveRes);
 
-      const dateStr = selectedDate.toISOString().slice(0,10);
+      // const dateStr = selectedDate.toISOString().slice(0,10);
       const exams = await getExamsByDate(dateStr);
       setSchedules(exams);
       setReloadCalendar(n=>n+1);

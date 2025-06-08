@@ -14,7 +14,6 @@ const Notice = () =>{
 
     
     useEffect(() => {
-        // (1) 사용자 정보 및 학습 정보 로드
         getCurrentUser()
             .then(user => {
                 const content = user.content || {};
@@ -30,7 +29,11 @@ const Notice = () =>{
                 if (user_studied_days != null) setStudyDays(user_studied_days);
                 if (user_completed_studys != null) setCompleted(user_completed_studys);
                 if (user_total_studys != null) setTotal(user_total_studys);
-                return instance.get(`/exam-schedules/id/${user_id}`);
+                // return instance.get(`/exam-schedules/id/${user_id}`);
+                return (
+                    instance
+                    .get('/exam-schedules')
+                    .then(res => ({ all: res.data.content, user_id })));
             })
             .then(res => {
                 let exams = res.data.content;
@@ -45,17 +48,45 @@ const Notice = () =>{
                 return {
                     subject: item.exam_schedule_name,
                     dday,
-                    key: index // 렌더링 키
+                    key: index 
                 };
                 });
                 setDDays(withDDay);
             })
+            .then(({ all, userId }) => {
+      // 단일 객체일 때도 배열로 다룰 수 있게 래핑
+      let exams = Array.isArray(all) ? all : [all];
+
+      // 1) user_id 로 필터
+      const myExams = exams.filter(ex => ex.user_id === userId);
+
+      // 2) D-Day 계산
+      const today = new Date();
+      const withDDay = myExams.map((ex, i) => {
+        const diff = new Date(ex.exam_schedule_date) - today;
+        return {
+          subject: ex.exam_schedule_name,
+          dday: Math.ceil(diff / (1000 * 60 * 60 * 24)),
+          key: ex.exam_schedule_id || i
+        };
+      });
+
+      setDDays(withDDay);
+    })
             .catch(err => console.error('데이터 로드 실패:', err));
     }, []);
 
-    const top3Exams = Array.isArray(dDays)
-    ? [...dDays].sort((a, b) => a.dday - b.dday).slice(0, 3)
+    // const top3Exams = Array.isArray(dDays)
+    // ? [...dDays].sort((a, b) => a.dday - b.dday).slice(0, 3)
+    // : [];
+
+    const upcomingExams = Array.isArray(dDays)
+    ? dDays
+        .filter(item => item.dday >= 0)          // 종료된 항목 제거
+        .sort((a, b) => a.dday - b.dday)          // 오름차순 정렬
+        .slice(0, 3)                              // 상위 3개만 취함
     : [];
+
 
     const percent = total === 0 ? 0 : ((completed / total) * 100).toFixed(2);
 
@@ -70,12 +101,15 @@ const Notice = () =>{
                 {/* 가장가까운 시험 3개만 표출됩니다. */}
                 <div className="noticeFir">
                     <div className="ToExam">시험까지</div>
-                        {top3Exams.map((item, index) => (
+                        {upcomingExams.length > 0 ? ( 
+                            upcomingExams.map((item, index) => (
                             <div className="ToOneExam" key={`${item.subject}-${index}`}>
-                            <div>{item.subject}</div>
-                            <div>{item.dday >= 0 ? `D-${item.dday}` : `종료됨`}</div>
+                                <div>{item.subject}</div>
+                                <div>{`D-${item.dday}`}</div>
                             </div>
-                        ))}   
+                        ))
+                    ):(<div className="no-exams">예정된 시험이 없습니다.</div>)
+                    }   
                 </div>
 
                 {/* 오늘의 학습률 */}

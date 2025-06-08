@@ -7,6 +7,7 @@ import { getSchedulesByDate, getSchedulesInRange, deleteSchedule } from '../data
 import { getExamsByDate, deleteExam, getExamsInRange } from "../data/mockExamService";
 import {FaTrash} from 'react-icons/fa'
 import testImage from "../assets/test.png";
+// import instance, { getCurrentUser } from '../api/axios';
 
 
 
@@ -48,7 +49,40 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
 
       fetchMonthData();
     }, [currentMonth, reloadTrigger]);
+  //   useEffect(() => {
+  //   getCurrentUser()
+  //     .then(user => {
+  //       // getCurrentUser 반환 객체의 content 필드 사용
+  //       const userId = user.user_id;
+  //       const token = localStorage.getItem('accessToken');
 
+  //       return instance.get(
+  //         '/exam-schedules',
+  //         {headers: {
+  //           Authorization: `Bearer ${token}`
+  //         }}
+  //       )
+  //         .then(res => ({data: res.data.conetent, userId}));
+  //     })
+  //     .then(({ exams, userId }) => {
+  //       let list = exams;
+  //       if (!Array.isArray(list)) list = [list];
+  //       // 필터: 사용자별
+  //       const userExams = list.filter(item => item.user_id === userId);
+  //       // 월간 그룹핑
+  //       const map = userExams.reduce((acc, item) => {
+  //         const key = item.exam_schedule_date;
+  //         acc[key] = acc[key] || [];
+  //         acc[key].push(item);
+  //         return acc;
+  //       }, {});
+  //       setMonthExams(map);
+  //     })
+  //     .catch(err => {
+  //       console.error('월간 시험 일정 로드 실패', err);
+  //       setMonthExams({});
+  //     });
+  // }, [currentMonth, reloadTrigger]);
 
       
     // 2) 선택된 날짜의 스케줄 + 시험을 한 번에 불러오기
@@ -72,6 +106,10 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
 
       fetchDayData();
     }, [selectedDate, reloadTrigger]);
+    useEffect(() => {
+      const key = format(selectedDate, 'yyyy-MM-dd');
+      setExamSchedules(monthExams[key] || []);
+    }, [selectedDate, monthExams]);
 
 
 

@@ -99,7 +99,7 @@ label {
     
 }
 
-.password_update, .deleteAccount div{
+.password div, .deleteAccount div{
     flex: 1;
     justify-content: center;
 }
@@ -109,7 +109,41 @@ label {
     border: 1px solid;
     padding: 5px 10px;
     background-color: #ddd;
+    border-radius: 5px;
 }
+
+.passwordChange {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.5rem 0 1.5rem;
+    border: 1px solid;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.passwordChange input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.passwordChange button {
+    width: fit-content;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.passwordChange button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
 
 .E-Alarm {
     display: flex;
