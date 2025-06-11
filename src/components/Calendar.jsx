@@ -18,6 +18,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
 
       // --- 월간 학습 + 시험 불러오기 (전체 → 클라이언트 필터) ---
   useEffect(() => {
+    // console.log("calendar useEffect", reloadTrigger);
     (async () => {
       try {
         const monthStart = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
@@ -198,8 +199,6 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
                 <div className="detailDate">
                     {format(selectedDate, 'MM월 dd일')}
                     <div className="addDetail">
-                        {/* <button onClick={()=>onAddStudy()} className="StudyButton">+ 학습추가</button>
-                        <button onClick={()=>onAddExam()} className="StudyButton">+ 시험추가</button> */}
                         <button onClick={()=>onAddSchedule()} className="StudyButton">+ 일정추가</button>
                     </div>
                 </div>
