@@ -7,16 +7,14 @@ import {useState, useRef, useEffect} from 'react';
 import "./MainPage.css";
 import record from "../assets/record.png";
 import DatePicker from "../components/DatePicker"
-import OnOffToggle from "../components/OnOff";
-import RecordingModal from "../components/RecordingModal"
 import RecordingModal1 from "../components/RecordingModal1";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import SubjectSearch from "../components/SubjectSearch";
 import MaterialSearch from "../components/MaterialSearch";
 // import { getStudiesByDate, saveStudy } from '../data/mockStudyService';
-import { getSchedulesInRange as getStudiesByDate, saveSchedule as saveStudy } from "../data/mockStudyService";
+// import { getSchedulesInRange as getStudiesByDate, saveSchedule as saveStudy } from "../data/mockStudyService";
 import { format } from 'date-fns';
-import { saveExams, getExamsByDate } from '../data/mockExamService'
+// import { saveExams, getExamsByDate } from '../data/mockExamService'
 import AddStudy from "../components/AddStudyModal";
 import AddExam from "../components/AddExamModal";
 
@@ -251,7 +249,7 @@ export default function MainPage() {
   return (
     <div className="Main">
       <Header />
-      <Notice />
+      <Notice reloadTrigger={reloadCalendar}/>
       <div className="cal_todo">
         <Calendar 
           onAddStudy={handleAddStudy}

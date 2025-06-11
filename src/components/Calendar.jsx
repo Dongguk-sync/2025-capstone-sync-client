@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import "./Calendar.css"
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay } from 'date-fns';
 import Study from './Study';
-// import { getSchedulesInRange, deleteSchedule } from '../data/calendarService';
-import { getSchedulesByDate, getSchedulesInRange, deleteSchedule } from '../data/mockStudyService';
-import { getExamsByDate, deleteExam, getExamsInRange } from "../data/mockExamService";
 import {FaTrash} from 'react-icons/fa'
 import testImage from "../assets/test.png";
-// import instance, { getCurrentUser } from '../api/axios';
-
+import  { getCurrentUser } from '../api/axios';
+import axios from 'axios';
 
 
 const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
@@ -19,151 +16,100 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const [examSchedules, setExamSchedules] = useState([]);
     const [monthExams, setMonthExams] = useState({});
 
-    // 1) 월간 스케줄 + 월간 시험을 한 번에 불러오기
-    useEffect(() => {
-      const monthStart = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
-      const monthEnd   = format(endOfMonth(currentMonth),   'yyyy-MM-dd');
+      // --- 월간 학습 + 시험 불러오기 (전체 → 클라이언트 필터) ---
+  useEffect(() => {
+    (async () => {
+      try {
+        const monthStart = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
+        const monthEnd   = format(endOfMonth(currentMonth),   'yyyy-MM-dd');
 
-      async function fetchMonthData() {
-        try {
-          const [studies, exams] = await Promise.all([
-            getSchedulesInRange(monthStart, monthEnd),
-            getExamsInRange(   monthStart, monthEnd)
-          ]);
+        // 1) 유저 정보
+        const userRes = await getCurrentUser();
+        const userId  = userRes.content.user_id;
+        const token = localStorage.getItem('accessToken');
 
-          const toMap = list =>
-            list.reduce((acc, item) => {
-              acc[item.date] = acc[item.date] || [];
-              acc[item.date].push(item);
-              return acc;
-            }, {});
-          
-          setMonthSchedules(toMap(studies));
-          setMonthExams(     toMap(exams)   );
-        } catch (err) {
-          console.error('월간 데이터 로드 실패', err);
-          setMonthSchedules({});
-          setMonthExams({});
-        }
+        // 2) 학습일정 전체
+        // const studiesRes = await axios.get(
+        //   `/api/study-schedules/user-id/${userId}`,
+                // {headers: {Authorization: `Bearer ${token}`}}
+        // );
+        // const allStudies = Array.isArray(studiesRes.data.content)
+        //   ? studiesRes.data.content
+        //   : [studiesRes.data.content];
+
+        // 3) 시험일정 전체      
+        const examsRes = await axios.get(
+          `/api/exam-schedules/user-id/${userId}`,
+          {headers: {Authorization: `Bearer ${token}`}}
+        );
+        // console.log('allExams raw: ', examsRes.data.content);
+        const allExams = Array.isArray(examsRes.data.content)
+          ? examsRes.data.content
+          : [examsRes.data.content];
+
+        // — 학습: 월간 범위 필터 + 날짜별 맵핑
+        // const filteredStudies = allStudies.filter(item =>
+        //   item.date >= monthStart && item.date <= monthEnd
+        // );
+        // const studyMap = filteredStudies.reduce((acc, item) => {
+        //   acc[item.date] = acc[item.date] || [];
+        //   acc[item.date].push(item);
+        //   return acc;
+        // }, {});
+        // setMonthSchedules(studyMap);
+
+        // — 시험: 월간 범위 필터 + 날짜별 맵핑
+        const filteredExams = allExams.filter(item =>
+          item.exam_schedule_date >= monthStart &&
+          item.exam_schedule_date <= monthEnd
+        );
+        const examMap = filteredExams.reduce((acc, item) => {
+          const key = item.exam_schedule_date;
+          acc[key] = acc[key] || [];
+          acc[key].push(item);
+          return acc;
+        }, {});
+        setMonthExams(examMap);
+
+      } catch (err) {
+        console.error('월간 데이터 로드 실패', err);
+        setMonthSchedules({});
+        setMonthExams({});
       }
+    })();
+  }, [currentMonth, reloadTrigger]);
 
-      fetchMonthData();
-    }, [currentMonth, reloadTrigger]);
-  //   useEffect(() => {
-  //   getCurrentUser()
-  //     .then(user => {
-  //       // getCurrentUser 반환 객체의 content 필드 사용
-  //       const userId = user.user_id;
-  //       const token = localStorage.getItem('accessToken');
+    // --- 선택된 날짜 일간 학습+시험 필터링 ---
+  useEffect(() => {
+    const key = format(selectedDate, 'yyyy-MM-dd');
+    setDailySchedules(monthSchedules[key] || []);
+    setExamSchedules(monthExams[key] || []);
+  }, [selectedDate, monthSchedules, monthExams]);
 
-  //       return instance.get(
-  //         '/exam-schedules',
-  //         {headers: {
-  //           Authorization: `Bearer ${token}`
-  //         }}
-  //       )
-  //         .then(res => ({data: res.data.conetent, userId}));
-  //     })
-  //     .then(({ exams, userId }) => {
-  //       let list = exams;
-  //       if (!Array.isArray(list)) list = [list];
-  //       // 필터: 사용자별
-  //       const userExams = list.filter(item => item.user_id === userId);
-  //       // 월간 그룹핑
-  //       const map = userExams.reduce((acc, item) => {
-  //         const key = item.exam_schedule_date;
-  //         acc[key] = acc[key] || [];
-  //         acc[key].push(item);
-  //         return acc;
-  //       }, {});
-  //       setMonthExams(map);
-  //     })
-  //     .catch(err => {
-  //       console.error('월간 시험 일정 로드 실패', err);
-  //       setMonthExams({});
-  //     });
-  // }, [currentMonth, reloadTrigger]);
+ // --- 학습 삭제 ---
+  const handleDelete = async (id) => {
+    const token = localStorage.getItem('accessToken');
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    await axios.delete(
+      `/api/study-schedules/${id}`,
+      {headers: {Authorization: `Bearer ${token}`}}
 
-      
-    // 2) 선택된 날짜의 스케줄 + 시험을 한 번에 불러오기
-    useEffect(() => {
-      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    );
+    onReload(); // 부모에 reloadTrigger 변화를 알려 전체 재요청
+  };
 
-      async function fetchDayData() {
-        try {
-          const [dayStudies, dayExams] = await Promise.all([
-            getSchedulesByDate(dateStr),
-            getExamsByDate(       dateStr)
-          ]);
-          setDailySchedules(dayStudies);
-          setExamSchedules(     dayExams   );
-        } catch (err) {
-          console.error('일간 데이터 로드 실패', err);
-          setDailySchedules([]);
-          setExamSchedules([]);
-        }
-      }
+  // --- 시험 삭제 ---
+  const handleExamDelete = async (id) => {
+    const token = localStorage.getItem('accessToken');
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    await axios.delete(
+      `/api/exam-schedules/${id}`,
+      {headers: {Authorization: `Bearer ${token}`}}
 
-      fetchDayData();
-    }, [selectedDate, reloadTrigger]);
-    useEffect(() => {
-      const key = format(selectedDate, 'yyyy-MM-dd');
-      setExamSchedules(monthExams[key] || []);
-    }, [selectedDate, monthExams]);
-
-
-
-
-      // 학습 삭제 핸들러: localStorage 에서 지우고, 두 가지 state 모두 갱신
-    const handleDelete = async (id) => {
-      if (!window.confirm('정말 삭제하시겠습니까?')) return;
-
-      await deleteSchedule(id);
-
-      // (a) 삭제된 날짜(Date) 와 동일한 월간 일정 다시 불러오기
-      const start = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
-      const end   = format(endOfMonth(currentMonth),   'yyyy-MM-dd');
-      const monthList = await getSchedulesInRange(start, end);
-      const map  = monthList.reduce((acc, item) => {
-        acc[item.date] = acc[item.date] || [];
-        acc[item.date].push(item);
-        return acc;
-      }, {});
-      setMonthSchedules(map);
-
-      // (b) 현재 보고 있는 selectedDate 에 대해서만 다시 불러오기
-      const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      const dayList = await getSchedulesByDate(dateStr);
-      setDailySchedules(dayList);
-    };
-
-
-
-      // 시험 삭제 핸들러: localStorage 에서 지우고, 두 가지 state 모두 갱신
-    const handleExamDelete = async (id) => {
-      if (!window.confirm('정말 삭제하시겠습니까?')) return;
-
-      await deleteExam(id);
-
-      // (a) 삭제된 날짜(Date) 와 동일한 월간 일정 다시 불러오기
-      const start = format(startOfMonth(currentMonth), 'yyyy-MM-dd');
-      const end   = format(endOfMonth(currentMonth),   'yyyy-MM-dd');
-      const monthList = await getExamsInRange(start, end);
-      const map  = monthList.reduce((acc, item) => {
-        acc[item.date] = acc[item.date] || [];
-        acc[item.date].push(item);
-        return acc;
-      }, {});
-      setMonthExams(map);
-
-      // (b) 현재 보고 있는 selectedDate 에 대해서만 다시 불러오기
-      const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      const dayList = await getExamsByDate(dateStr);
-      setDailySchedules(dayList);
-
-      onReload();
-    };
-
+    );
+    onReload();
+  };
+    
 
     const renderHeader = () => (
         <div className="CalHeader">
@@ -239,7 +185,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
 
     return ( 
         <div className="mainStudy">
-          {/* 오른쪽 달력 부분 */}
+          {/* 왼쪽 달력 부분 */}
             <div className="calendar">
                 {renderHeader()}
                 {renderDays()}
@@ -247,7 +193,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
             </div>
 
 
-          {/* 왼쪽 학습 일정 부분 */}
+          {/* 오른쪽 학습 일정 부분 */}
             <div className="detail">
                 <div className="detailDate">
                     {format(selectedDate, 'MM월 dd일')}
@@ -264,13 +210,13 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
                     <div className="examLabel">시험 일정</div>
                     {/* 각 시험 항목 */}
                     {examSchedules.map(ex => (
-                      <div key={ex.id} className="ExamItem">
+                      <div key={ex.exam_schedule_id} className="ExamItem">
                         <div className="ExamTitle">
-                          <img src={testImage} className="testIcon" alt="" />
-                          <span>{ex.title}</span>
+                          <img src={testImage} className="testIcon" alt="시험 아이콘" />
+                          <span>{ex.exam_schedule_name}</span>
                         </div>
                         <button
-                          onClick={() => handleExamDelete(ex.id)}
+                          onClick={() => handleExamDelete(ex.exam_schedule_id)}
                           aria-label="삭제"
                         >
                           <FaTrash size={14} />

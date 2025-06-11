@@ -4,7 +4,7 @@ import instance from '../api/axios';
 import { getCurrentUser } from '../api/axios';
  
 
-const Notice = () =>{
+const Notice = ({ reloadTrigger }) =>{
 
     const [dDays, setDDays] = useState([]);
     const [completed, setCompleted] = useState(0);
@@ -50,7 +50,7 @@ const Notice = () =>{
                 setDDays(withDDay);
             })
             .catch(err => console.error('데이터 로드 실패:', err));
-    }, []);
+    }, [reloadTrigger]);
 
     const upcomingExams = Array.isArray(dDays)
     ? dDays
@@ -76,7 +76,7 @@ const Notice = () =>{
                         upcomingExams.map((item, index) => (
                             <div className="ToOneExam" key={`${item.subject}-${index}`}>
                                 <div>{item.subject}</div>
-                                <div>{item.dday === 0 ? 'D-day' : `D-${item.dday}`}</div>
+                                <div>{item.dday === 0 ? 'D-day' :`D-${item.dday}`}</div>
                             </div>
                         ))
                     ):(<div className="no-exams">예정된 시험이 없습니다.</div>)
