@@ -175,7 +175,7 @@
 }
 
 
-.toggle-btn {
+.Schedule-toggle-btn {
   display: flex;
   width: 80%;
   border: 1px solid #cfd4dc;
@@ -186,7 +186,7 @@
   margin-bottom: 10px;
 }
 
-.toggle-btn button {
+.Schedule-toggle-btn button {
   flex: 1;                   /* 좌우 반반씩 */
   margin: 0;                 /* 간격 제거 */
   padding: 0.2em 1em;
@@ -199,7 +199,7 @@
   border-radius: 0;          /* 버튼 자체 모서리 제거 */
 }
 
-.toggle-btn button.active {
+.Schedule-toggle-btn button.active {
   /* background: var(--color-sub);
   color: var(--color-point); */
   background-color: var(--color-sub);

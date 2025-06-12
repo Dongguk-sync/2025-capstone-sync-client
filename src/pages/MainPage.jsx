@@ -421,7 +421,7 @@ export default function MainPage() {
                 </div>
               </div>
               <div className="right_content">
-                <div className="toggle-btn">
+                <div className="Schedule-toggle-btn">
                   <button
                     className={mode==='study'? 'active': ''}
                     onClick={()=> {

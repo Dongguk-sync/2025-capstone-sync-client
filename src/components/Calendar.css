@@ -148,6 +148,15 @@
   color: #333;
 }
 
+.icon-new {
+  color: #25365F;
+  font-size: 1rem;
+}
+
+.icon-completed {
+  color: #F87171;
+  font-size: 1rem;
+}
 
 .StudyItem {
   display: flex;
@@ -155,6 +164,11 @@
   justify-content: space-between;
   padding: 0.75rem 0;
   border-bottom: 1px solid #ddd;
+}
+
+.StudyGroup{
+    display: flex;
+    gap: 20px;
 }
 
 .StudyItem:last-child {
@@ -174,6 +188,13 @@
     border-radius: 8px;
     background-color: var(--color-main);
     color: var(--color-point);
+}
+
+.ResultBtn{
+    border: 2px solid var(--color-main);
+    width: 100px;
+    padding: 3px;
+    border-radius: 8px;
 }
 
 .examSchedule{

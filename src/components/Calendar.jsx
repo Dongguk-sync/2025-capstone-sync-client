@@ -236,6 +236,9 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
                     schedules={dailySchedules}
                     onDelete={handleDelete}
                     onStartStudy={onStartStudy}
+                    // onViewResult={}
+                    // 나중에 교안관리 완성되고 결과 페이지
+                    // 완성되면 연결
                   />
                 </div>
             </div>
