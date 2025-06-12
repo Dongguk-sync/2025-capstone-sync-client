@@ -7,7 +7,6 @@ import { useState, useRef, useEffect } from 'react';
 import "./MainPage.css";
 import record from "../assets/record.png";
 import DatePicker from "../components/DatePicker"
-import RecordingModal1 from "../components/RecordingModal1";
 
 import RecordingModal2 from "../components/RecordingModal2";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
@@ -20,12 +19,8 @@ import AddExam from "../components/AddExamModal";
 
 import instance, {getCurrentUser} from "../api/axios";
 
-// token 관리
-// import instance from '../api/axios';
-
-
 export default function MainPage() {
-  const [showRecordingModal, setShowRecordingModal] = useState(false)
+  // const [showRecordingModal, setShowRecordingModal] = useState(false)
   const [currentStudyItem, setStudyItem]            = useState(null)
   const [selectedDate, setSelectedDate]             = useState(new Date())
 
@@ -36,6 +31,8 @@ export default function MainPage() {
 
   // 녹음 된 파일 확인
   const [audioUrl, setAudioUrl] = useState(null);
+  const [wavBlob, setWavBlob] = useState(null);
+  // const [wavBlobs, setWavBlobs] = useState([]);
 
   // 모달창 뒤로가기 기능을 위해 모달창을 스택으로 관리
   const [ modalStack, setModalStack ] = useState([]);
@@ -50,6 +47,8 @@ export default function MainPage() {
   // 학습 등록하면 바로 달력에 반영되도록
   const [reloadCalendar, setReloadCalendar] = useState(0);
   const [mode, setMode] = useState('study');
+
+  const [audioStream, setAudioStream] = useState(null);
 
   function openModal(type) {
     setModalStack(prev =>{
@@ -121,59 +120,140 @@ export default function MainPage() {
     const recorder = mediaRecorderRef.current;
     recorder.onstop = async () => {
       const webmBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-      const wavBlob = await convertWebmToWav(webmBlob);
-      const wavUrl = URL.createObjectURL(wavBlob);
-      setAudioUrl(wavUrl);
+      const _waveBlob = await convertWebmToWav(webmBlob);
 
-      const formData = new FormData();
-      formData.append('file', wavBlob, 'recording.wav');
-      const token = localStorage.getItem('accessToken');
-      try {
-        const resp = await instance.post(
-          '/stt',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`,
-            }
-          }
-        );
-        // const resp = await instance.fetch(
-        //   '/api/stt', {
-        //     method: 'POST',
-        //     body: formData
-        //   }
-        // );
-        console.log('STT 결과:', resp.data);
-      } catch (e) {
-        console.error('STT 호출 오류:', e);
-      }
+      setWavBlob(_waveBlob);
+
+      // setWavBlobs(prev => [...prev, _waveBlob]);
+
+      const wavUrl = URL.createObjectURL(_waveBlob);
+      setAudioUrl(wavUrl);
     };
   }, [mediaRecorderRef.current]);
 
   const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
-      audioChunksRef.current = [];
-      mediaRecorderRef.current.ondataavailable = e => {
-        if (e.data.size > 0) audioChunksRef.current.push(e.data);
-      };
-      mediaRecorderRef.current.start();
-      setRecording(true);
-    } catch (err) {
-      console.error('마이크 권한 오류:', err);
-      alert('녹음 권한이 필요합니다.');
-    }
-  };
+  try {
+    // 1) 마이크 권한 요청 및 스트림 획득
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // → 이 한 줄 추가!
+    setAudioStream(stream);
+
+    // 2) MediaRecorder 세팅 (기존 로직)
+    const recorder = new MediaRecorder(stream);
+    mediaRecorderRef.current = recorder;
+    audioChunksRef.current = [];
+    recorder.ondataavailable = e => {
+      if (e.data.size > 0) audioChunksRef.current.push(e.data);
+    };
+    recorder.start();
+    setRecording(true);
+
+  } catch (err) {
+    console.error('마이크 권한 오류:', err);
+    alert('녹음 권한이 필요합니다.');
+  }
+};
+
 
   const stopRecording = () => {
     if (mediaRecorderRef.current && recording) {
       mediaRecorderRef.current.stop();
       setRecording(false);
+
+      audioStream.getTracks().forEach(track => track.stop());
+      setAudioStream(null);
     }
   };
+
+
+  const handleSubmitRecording = async () => {
+    console.log("📦 wavBlob is", wavBlob, "type:", typeof wavBlob);
+
+    if (!wavBlob) {
+      alert("먼저 녹음을 완료해 주세요.");
+      return;
+    }
+
+    const fd = new FormData();
+    // study_schedule_id: 지금 보고 있는 스케줄 아이디
+    fd.append("study_schedule_id", currentStudyItem.study_schedule_id);
+    // answer_file_id: MaterialSearch로 선택한 file_id
+    fd.append("answer_file_id", currentStudyItem.file_id);
+    // speech_file: 녹음된 WAV 파일
+    console.log("currentStudyItem", currentStudyItem);
+    fd.append("speech_file", wavBlob, "recording.wav");
+
+    for (let pair of fd.entries()){
+      console.log(pair[0] + ':', pair[1]);
+    }
+    const token = localStorage.getItem("accessToken");
+    console.log(token);
+    try {
+      // ② 맞춤형 채점 API 호출
+      const resp = await instance.post(
+        "/studys/learn",
+        fd,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      console.log("채점 결과:", resp.data);
+      // TODO: resp.data를 상태에 저장하거나, 모달 닫고 UI 갱신
+    } catch (err) {
+      console.error("채점 API 호출 오류:", err);
+      alert("채점 요청에 실패했습니다.");
+    }
+    // const results = [];
+
+  //   for (let i = 0; i < wavBlobs.length; i++){
+  //     const fd = new FormData();
+  //     fd.append("file", wavBlobs[i], `recording_${i+1}.wav`);
+
+  //     const token = localStorage.getItem("accessToken");
+  //     try {
+  //     const resp = await instance.post(
+  //       "/stt",
+  //       fd,
+  //       { headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${token}`
+  //         }}
+  //     );
+  //     // const text = resp.data.text;
+  //     // console.log(`STT 결과 [녹음 ${i+1}]`, text);
+  //     // results.push(`${text}`)
+  //   }  catch(err) {
+  //     console.err("STT호출 오류: ", err);
+  //     alert("STT 요청에 실패했습니다.");
+  //     break;
+  //   }
+  // } 
+    // const combined = results.join("\n");
+    // const combined = results.join(" ");
+    // console.log(combined);
+
+    //  파일 다운받을 수 있는 부분
+    // const blob = new Blob([combined], {type: "text/plain"});
+    // const url = URL.createObjectURL(blob);
+
+    // const a = document.createElement("a");
+    // a.href = url;
+    // a.download = "transcript.txt";
+    // a.click();
+
+
+    setWavBlob([]);
+    setAudioUrl(null);
+  };
+
+  const handleRestartRecording = () => {
+    setWavBlob([]);
+    setAudioUrl(null);
+    audioChunksRef.current = [];
+  }
 
 
   // 일정추가 버튼 클릭시 (학습, 시험 일정 통합하여 추가)
@@ -186,11 +266,30 @@ export default function MainPage() {
     openModal('addSchedule');
   }
 
-  // Study → MainPage로, 기존 일정의 학습하기 클릭
-  const handleStartStudy = (item) => {
-    setStudyItem(item);      // 어떤 스케줄인지 저장
-    openModal('startRecord');
-  };
+  const handleStartStudy = async (item) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await instance.get(
+        `/study-schedules/id/${item.study_schedule_id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const detail = response.data.content;
+      
+      const studyItem = {
+        ...detail,
+        subjectName: detail.subject_name,
+        materialTitle: detail.file_name
+      };
+
+      // console.log("Loaded studyItem: ", studyItem);
+      setStudyItem(studyItem);
+      openModal('startRecord');
+    } catch(err) {
+      console.error("스케줄 상세 조회 오류: ", err);
+      alert("학습 정보를 불러오는 데 실패하였습니다.");
+    }
+  }
 
   const handleAddStudySubmit = async () => {
   if (!subject || !material) {
@@ -266,53 +365,6 @@ export default function MainPage() {
     }
   };
 
-  // useEffect(() => {
-  //   if (!mediaRecorderRef.current) return;
-  //   const recorder = mediaRecorderRef.current;
-  //   recorder.onstop = () => {
-  //     const blob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-  //     const url  = URL.createObjectURL(blob);
-  //     setAudioUrl(url);
-  //     // 필요시: URL.revokeObjectURL(url) 로 해제
-  //   };
-  // }, []);
-
-  // const startRecording = async () => {
-  //   try {
-  //   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  //   mediaRecorderRef.current = new MediaRecorder(stream);
-  //   audioChunksRef.current = [];
-
-  //   mediaRecorderRef.current.ondataavailable = e => {
-  //       // 데이터 청크가 들어올 때마다 배열에 저장
-  //       if (e.data.size > 0) {
-  //         audioChunksRef.current.push(e.data);
-  //       }
-  //   };
-
-    // mediaRecorderRef.current.onstop = () => { 
-    //     // 녹음이 멈추면 모든 청크를 blob으로 합쳐 URL 생성
-    //     const blob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-    //     const url  = URL.createObjectURL(blob);
-    //     setAudioUrl(url);
-    //  };
-
-  //   mediaRecorderRef.current.start();
-  //   setRecording(true);
-  //   } catch(err){
-  //     console.error('마이크 권한 오류:', err);
-  //     alert('녹음 권한이 필요합니다.');
-  // }
-  // };
-
-  // const stopRecording = () => {
-  //   if (mediaRecorderRef.current && recording) {
-  //     mediaRecorderRef.current.stop();
-  //     setRecording(false);
-  //   }
-  // };
-
-
   return (
     <div className="Main">
       <Header />
@@ -339,16 +391,17 @@ export default function MainPage() {
         {/* 학습 시작 모달 */}
         {currentModal === 'startRecord' && currentStudyItem && (
           <>
+            {/* {console.log('▶ currentStudyItem:', currentStudyItem)} */}
             <h2>{currentStudyItem.subjectName} - {currentStudyItem.materialTitle}</h2>
             <div className="record_img">
               <button 
                 onClick={() => openModal('Recording')}>
                 <img 
-                    src={record} alt="record" className="profile_icon"
+                  src={record} alt="record" className="profile_icon"
                 />
               </button>
               <div>학습을 시작하려면 누르세요.</div>
-              <div>녹음이 바로 시작됩니다.</div>
+              {/* <div>녹음이 바로 시작됩니다.</div> */}
             </div>
           </>
         )}
@@ -455,21 +508,18 @@ export default function MainPage() {
         {/* 실제 녹음 중 모달 창 */}
         {currentModal === 'Recording' && (
           <div>
+            <h2>{currentStudyItem.subjectName} - {currentStudyItem.materialTitle}</h2>
             <RecordingModal2
-              isOpen={ showRecordingModal }
-              onClose={()=> setShowRecordingModal(false)}
+              // isOpen={ showRecordingModal }
+              // onClose={()=> setShowRecordingModal(false)}
               studyItem={currentStudyItem}
               recording={recording}
               startRecording={startRecording}
               stopRecording={stopRecording}
+              audioStream = {audioStream}
+              onSubmit={handleSubmitRecording}
+              onRestart={handleRestartRecording}
             />
-
-            {audioUrl && (
-              <div>
-                <h4>녹음 미리 듣기</h4>
-                <audio src={audioUrl} controls />
-              </div>
-            )}
           </div>
         )}
       </Modal>
