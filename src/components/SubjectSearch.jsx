@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import './SearchModal.css';  // 공통 스타일
+import instance, {getCurrentUser} from "../api/axios";
 
-/**
- * props:
- *  - onSelect(subject) : 사용자가 과목을 하나 클릭했을 때 호출
- */
 export default function SubjectSearch({ onSelect }) {
   const [query, setQuery] = useState('');
   const [subjects, setSubjects] = useState([]);
 
-  // 예시: 서버에서 과목 리스트를 가져온다고 가정
-  useEffect(() => {
+    useEffect(() => {
     async function fetchSubjects() {
-      // TODO: 실제 API 호출로 대체
-      const all = [
-        { id: 'eng', name: '영어' },
-        { id: 'math', name: '수학' },
-        { id: 'cs',   name: '컴퓨터 과학' },
-        { id: '1', name: 'one' },
-        { id: '2', name: 'two' },
-        { id: '3', name: 'three' },
-        { id: '4', name: 'four' },
-        { id: '5', name: 'five' },
+      try {
+        // 1) 현재 로그인된 사용자 ID 얻기
+        const user = await getCurrentUser();
+        const userId = user.content.user_id;
 
-        // …
-      ];
-      setSubjects(all);
+        // 2) API 호출: /api/subjects/user-id/{userId}
+        const res = await instance.get(`/subjects/user-id/${userId}`);
+        const raw = res.data.content;
+        const list = Array.isArray(raw) ? raw : [raw];
+
+        // 3) subject_id/subject_name 필드 → id/name 형태로 매핑
+        const mapped = list.map(item => ({
+          id:   item.subject_id,       // 숫자 ID
+          name: item.subject_name      // 과목명
+        }));
+        setSubjects(mapped);
+      } catch (err) {
+        console.error('과목 목록 로드 실패:', err);
+        setSubjects([]);
+      }
     }
     fetchSubjects();
   }, []);

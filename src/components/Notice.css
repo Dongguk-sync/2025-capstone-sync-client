@@ -55,8 +55,23 @@
     flex:1;
 }
 
-.ToOneExam > div{
-    flex:1;
+.ToOneExam .subject {
+  flex: 2;
+}
+
+.ToOneExam .dday {
+  flex: 1;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+ 
+.dday-today {
+  color: #d32f2f;
+}
+
+.no-exams{
+  margin: 0 auto;
+  padding-top: 1rem;
 }
 
 .progress-body{
@@ -69,9 +84,9 @@
 
 .donut {
   --size: 90px;          /* 원 전체 크기 */
-  --thickness: 12px;      /* 고리 두께 */
+  --thickness: 10px;      /* 고리 두께 */
   --empty: #e6e6e6;       /* 비어있는 부분 색 */
-  --fill: #3f51b5;        /* 채워지는 색 */
+  --fill: #3996DA;        /* 채워지는 색 */
   position: relative;
   width: var(--size);
   height: var(--size);

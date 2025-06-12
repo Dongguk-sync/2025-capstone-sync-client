@@ -7,26 +7,22 @@ import {useState, useRef, useEffect} from 'react';
 import "./MainPage.css";
 import record from "../assets/record.png";
 import DatePicker from "../components/DatePicker"
-import OnOffToggle from "../components/OnOff";
-import RecordingModal from "../components/RecordingModal"
 import RecordingModal1 from "../components/RecordingModal1";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import SubjectSearch from "../components/SubjectSearch";
 import MaterialSearch from "../components/MaterialSearch";
-// import { getStudiesByDate, saveStudy } from '../data/mockStudyService';
-import { getSchedulesInRange as getStudiesByDate, saveSchedule as saveStudy } from "../data/mockStudyService";
 import { format } from 'date-fns';
-import { saveExams, getExamsByDate } from '../data/mockExamService'
 import AddStudy from "../components/AddStudyModal";
 import AddExam from "../components/AddExamModal";
+
+
+import instance, {getCurrentUser} from "../api/axios";
 
 // token 관리
 // import instance from '../api/axios';
 
 
 export default function MainPage() {
-
-  // const [showInitialModal, setShowInitialModal]     = useState(false)
   const [showRecordingModal, setShowRecordingModal] = useState(false)
   const [currentStudyItem, setStudyItem]            = useState(null)
   const [selectedDate, setSelectedDate]             = useState(new Date())
@@ -47,20 +43,11 @@ export default function MainPage() {
   const [subject, setSubject ] = useState(null);
   const [material, setMaterial ] = useState(null);
 
-  const [reminder, setReminder] = useState(false);
+  // const [reminder, setReminder] = useState(false);
 
   // 학습 등록하면 바로 달력에 반영되도록
   const [reloadCalendar, setReloadCalendar] = useState(0);
-  const [schedules, setSchedules] = useState([]);
-
   const [mode, setMode] = useState('study');
-
-
-//  const refreshSchedules = async () => {
-//     const dateStr = selectedDate.toISOString().slice(0, 10);
-//     const list = await getStudiesByDate(dateStr);
-//     setSchedules(list);
-//  }
 
   function openModal(type) {
     setModalStack(prev =>{
@@ -86,20 +73,10 @@ export default function MainPage() {
     setStudyItem(null);
     setSubject(null);
     setMaterial(null);
-    setReminder(null);
+    setExamTitle('');
     setSelectedDate(new Date());
     openModal('addSchedule');
   }
-
-  // Calendar → MainPage로, +학습추가 클릭
-  const handleAddStudy = () => {
-    setStudyItem(null);      // 새로 추가할 땐 아이템 정보 비움
-    setSubject(null);
-    setMaterial(null);
-    setReminder(false);
-    setSelectedDate(new Date());
-    openModal('addStudy')
-  };
 
   // Study → MainPage로, 기존 일정의 학습하기 클릭
   const handleStartStudy = (item) => {
@@ -107,106 +84,79 @@ export default function MainPage() {
     openModal('startRecord');
   };
 
-  const handleAddExam = () => {
-    setStudyItem(null);
-    setExamTitle(null);
-    setSubject(null);
-    setReminder(false);
-    setSelectedDate(new Date());
-    openModal('addExam');
+  const handleAddStudySubmit = async () => {
+  if (!subject || !material) {
+    alert('과목과 교안을 모두 선택해주세요.');
+    return;
   }
 
-  const handleAddStudySubmit = async () => {
-    if (!subject || !material) {
-      alert('과목과 교안을 선택해주세요.');
-      return;
-    }
-    try {
-      // 실제 API 와 연결하면 실행
-      // const res = await fetch('/api/studies', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     date: selectedDate.toISOString().slice(0,10),
-      //     subjectId: subject.id,
-      //     materialId: material.id,
-      //     reminder: reminder
-      //   })
-      // });
-      // if (!res.ok) throw new Error('저장 실패');
-      // await res.json();
-      // goBackModal();           // 모달 닫기
-      // refreshSchedules();      // 캘린더 새로고침
-      await saveStudy({
-        date: format(selectedDate, 'yyyy-MM-dd'),
-        subjectId: subject.id,
-        subjectName: subject.name,
-        materialTitle: material.title,
-        reminder
-      });
-      goBackModal();
+  try {
+    // 1) 로그인 사용자 ID 가져오기
+    const user = await getCurrentUser();
+    const userId = user.content.user_id;
 
-      const dateStr = selectedDate.toISOString().slice(0,10);
-      const list = await getStudiesByDate(dateStr);
-      setSchedules(list);
-      setReloadCalendar(n=>n+1);
-    } catch (e) {
-      console.error(e);
-      alert('저장 중 오류가 발생했습니다.');
-    } finally {
-      // setLoading(false);
-    }
-  };
+    // 2) 백엔드가 기대하는 필드명(예: study_schedule_date, subject_id, material_id, user_id)로 페이로드 구성
+    const payload = {
+      study_schedule_date: format(selectedDate, 'yyyy-MM-dd'),
+      subject_id: subject.id,
+      file_id: material.id,
+      user_id: userId
+    };
+
+    // 3) 토큰 헤더를 붙여서 POST
+    const token = localStorage.getItem('accessToken');
+    await instance.post(
+      '/study-schedules',
+      payload,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // 4) 모달 닫고 달력·공지 리로드
+    goBackModal();
+    setReloadCalendar(n => n + 1);
+
+  } catch (err) {
+    console.error('학습 일정 저장 오류', err);
+    alert('학습 일정 저장 중 오류가 발생했습니다.');
+  }
+};
 
   // 시험 추가에 대한 부분
   const [examTitle, setExamTitle] = useState('');
-  // const [autoCreateExam, setAutoCreateExam] = useState(false);
-  // const [examReminder, setExamReminder] = useState(false);
-
-
+ 
+  // — 시험 추가: 실 API 호출 후 달력·공지 즉시 갱신 —
   const handleAddExamSubmit = async () => {
     if (!examTitle.trim() || !subject) {
-      alert('시험명을 입력하고 과목을 선택해주세요.');
+      alert('시험명과 과목을 모두 선택해주세요.');
       return;
     }
-    // setLoading(true);
-    try {
-      // 실제 API 와 연결하면 실행
-      // const res = await fetch('/api/studies', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     date: selectedDate.toISOString().slice(0,10),
-      //     subjectId: subject.id,
-      //     materialId: material.id,
-      //     reminder: reminder
-      //   })
-      // });
-      // if (!res.ok) throw new Error('저장 실패');
-      // await res.json();
-      // goBackModal();           // 모달 닫기
-      // refreshSchedules();      // 캘린더 새로고침
-      await saveExams({
-        date: format(selectedDate, 'yyyy-MM-dd'),
-        title: examTitle,
-        subjectId: subject.id,
-        subjectName: subject.name,
-        reminder
-      });
-      goBackModal();
 
-      const dateStr = selectedDate.toISOString().slice(0,10);
-      const exams = await getExamsByDate(dateStr);
-      setSchedules(exams);
-      setReloadCalendar(n=>n+1);
-    } catch (e) {
-      console.error(e);
-      alert('저장 중 오류가 발생했습니다.');
-    } finally {
-      // setLoading(false);
+    try {
+      const user = await getCurrentUser();
+      const userId = user.content.user_id;
+      const payload = {
+        exam_schedule_date: format(selectedDate, 'yyyy-MM-dd'),
+        exam_schedule_name: examTitle,
+        subject_id: subject.id,
+        user_id : userId
+      };
+
+      // 실제 API에 POST
+      const token = localStorage.getItem('accessToken');
+      await instance.post('/exam-schedules', payload, {
+        headers: {Authorization: `Bearer ${token}`}
+      });
+
+      // 모달 닫고 리로드 트리거++
+      goBackModal();
+      setReloadCalendar(n => n + 1);
+      // console.log("exam add", reloadCalendar)
+    
+    } catch (err) {
+      console.error('시험 저장 오류', err);
+      alert('시험 일정 저장 중 오류가 발생했습니다.');
     }
   };
-
 
   useEffect(() => {
     if (!mediaRecorderRef.current) return;
@@ -218,12 +168,6 @@ export default function MainPage() {
       // 필요시: URL.revokeObjectURL(url) 로 해제
     };
   }, [/* 이펙트가 recorder 로직 이후 실행되도록 deps 조정 */]);
-
-  useEffect(() => {
-    const dateStr = selectedDate.toISOString().slice(0,10);
-    getStudiesByDate(dateStr).then(setSchedules);
-  }, [selectedDate]);
-
 
   const startRecording = async () => {
     try {
@@ -264,13 +208,11 @@ export default function MainPage() {
   return (
     <div className="Main">
       <Header />
-      <Notice />
+      <Notice reloadTrigger={reloadCalendar}/>
       <div className="cal_todo">
         <Calendar 
-          onAddStudy={handleAddStudy}
           onAddSchedule={handleAddSchedule}
           onStartStudy={handleStartStudy}
-          onAddExam={handleAddExam}
           reloadTrigger={reloadCalendar}
           onReload={()=> setReloadCalendar(n=>n+1)}
         />
@@ -285,8 +227,6 @@ export default function MainPage() {
         isOpen={modalStack.length > 0} 
         onClose={closeModal}
         >
-
-         
 
         {/* 학습 시작 모달 */}
         {currentModal === 'startRecord' && currentStudyItem && (
@@ -392,6 +332,7 @@ export default function MainPage() {
               <div>교안 검색</div>
               <div className="searchContent">
                 <MaterialSearch
+                  subjectName = {subject.name}
                   subjectId={subject.id}
                   onSelect={mat => {
                     setMaterial(mat);

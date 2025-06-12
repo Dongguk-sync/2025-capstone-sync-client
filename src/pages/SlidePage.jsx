@@ -1,5 +1,8 @@
 // src/components/SlidePage.jsx
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import api from "../api/axios";
+
 import './SlidePage.css';
 import mailIcon from '../assets/mail.png';
 import PWIcon from '../assets/password.png';
@@ -8,9 +11,16 @@ import EyeoffIcon from '../assets/eyeoff.png';
 import { FaGoogle }      from 'react-icons/fa';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 import { SiNaver }       from 'react-icons/si';
-import { Link } from 'react-router-dom'; 
 
 export default function SlidePage() {
+
+  const [email, setEmail] = useState('');               // 이메일 입력 상태
+  const [password, setPassword] = useState('');         // 비밀번호 입력 상태
+  const [errorMsg, setErrorMsg] = useState('');         // 로그인 에러 메시지
+  
+  const navigate = useNavigate(); // React Router v6에서 화면 이동용
+  
+
   const [slid, setSlid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,6 +42,64 @@ export default function SlidePage() {
     // 우리 백엔드 카카오 시작 url
     window.location.href = 'https://우리백엔드.com/auth/kakao'
   }
+
+      /* 일반 로그인 버튼 클릭 시 호출되는 함수 */
+  const handleLogin = async (e) => {
+    // console.log('handleSubmit진입');
+    e.preventDefault();
+    setErrorMsg('');
+
+    try {
+      // 1) 백엔드 로그인 API 호출 (URL을 실제 엔드포인트로 교체)
+      const res = await api.post('/login', {
+          // 백엔드가 기대하는 필드 구조일 것
+          user_email: email.trim(),
+          user_password: password,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            // Authorization: `Bearer ${token}`
+          }
+          // withCredentials: true, 
+          // 필요한 경우 (세션/쿠키 사용 시)
+        }
+      );
+
+      // 2) 로그인 성공 시 응답 예시: { token: "eyJhbGc...", user: { ... } }
+      const token = res.data.content?.access_token;
+      const userId = res.data.content?.user_id;
+      const userEmail = res.data.content?.user_email;
+
+      // console.log('■ 서버로부터 받은 값 ■');
+      // console.log('token:', token);
+      // console.log('userId:', userId);
+      // console.log('userEmail:', userEmail);
+      // console.log('───────────────');
+
+
+      if (token && userId && userEmail) {
+        // 3) 받은 토큰을 localStorage(또는 쿠키)에 저장
+        localStorage.setItem('accessToken', token);
+        localStorage.setItem('userId', String(userId));
+        localStorage.setItem('userEmail', userEmail);
+
+        // 4) 로그인 성공 후 메인 페이지로 이동
+        navigate('/main');
+      } else {
+        console.log('백엔드 오류 메시지: ', res.data.error.message);
+        setErrorMsg('로그인에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      // 백엔드에서 보낸 메시지가 err.response.data.message에 담겨있을 수 있음
+      const msg = err.response?.data?.error?.message || err.response?.data?.message || '아이디/비밀번호를 확인해주세요.';
+      setErrorMsg(msg);
+      console.log('전체 에러 응답: ', err.response);
+    }
+  };
+
+
   return (
     <div className={`slide-container ${slid ? 'slid' : ''}`}>
       {/* 왼쪽 패널: Landing 텍스트 */}
@@ -55,6 +123,9 @@ export default function SlidePage() {
           <h2 className="auth-form__title">로그인</h2>
           <p className="auth-form__subtitle">이메일과 비밀번호를 입력하세요</p>
 
+          {errorMsg && <p>{errorMsg}</p>}
+
+          <form onSubmit={handleLogin}>
             {/* Email */}
             <label className="auth-form__label email-input-wrapper">
             Email
@@ -62,6 +133,9 @@ export default function SlidePage() {
                 type="email"
                 placeholder="이메일을 입력하세요"
                 className="auth-form__input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <img src={mailIcon} alt="mail" className="email-input-icon" />
             </label>
@@ -74,6 +148,9 @@ export default function SlidePage() {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="비밀번호를 입력하세요"
                 className="auth-form__input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <img src={PWIcon} alt="password" className="password-input-icon" />
               <button
@@ -98,7 +175,13 @@ export default function SlidePage() {
             <a href="/forgot">비밀번호 찾기</a>
           </div>
 
-          <button className="auth-form__submit"><Link to="/main">Login</Link></button>
+          <button 
+            className="auth-form__submit"
+            tyep="submit"
+          >Login</button>
+
+        </form>
+
 
           <div className="auth-form__divider">
             <span>or continue with</span>
