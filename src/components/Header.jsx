@@ -28,10 +28,13 @@ const Header = ()=> {
                 Baekji
             </Link>
             <div className="menu">
-                <Link to ='/ChatBot' className="chatbot">
+                <Link to ='/Chat' className="chatbot">
                     챗봇에게 질문하기
                 </Link>
-                <button>학습기록 및 교안관리</button>
+                <Link to ='/management' className="chatbot">
+                    학습기록 및 교안관리
+                </Link>
+                {/* <button>학습기록 및 교안관리</button> */}
                 <Link to ='/Profile' className="profile-btn">
                     <img 
                         src={profileUrl} alt="profile" className="profile-btn"

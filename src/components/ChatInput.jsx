@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 
-export default function ChatInput({ onSend }) {
+export default function ChatInput({ onSend, disabled }) {
   const [text, setText] = useState('');
 
   const send = () => {
@@ -20,12 +20,13 @@ export default function ChatInput({ onSend }) {
         maxRows={6}        /* 최대 6줄 */
         value={text}
         onChange={e => setText(e.target.value)}
+        disabled={disabled}
         onKeyDown={e =>
           e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())
         }
-        placeholder="메시지를 입력하세요..."
+        placeholder="질문을 입력하세요..."
       />
-      <button className="send-button" onClick={send}>
+      <button className="send-button" onClick={send} disabled={disabled}>
         ➤
       </button>
     </div>

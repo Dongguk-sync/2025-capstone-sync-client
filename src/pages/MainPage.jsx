@@ -3,11 +3,13 @@ import Footer from "../components/Footer"
 import Calendar from "../components/Calendar"
 import Notice from "../components/Noitce"
 import Modal from "../components/Modal"
-import {useState, useRef, useEffect} from 'react';
+import { useState, useRef, useEffect } from 'react';
 import "./MainPage.css";
 import record from "../assets/record.png";
 import DatePicker from "../components/DatePicker"
 import RecordingModal1 from "../components/RecordingModal1";
+
+import RecordingModal2 from "../components/RecordingModal2";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import SubjectSearch from "../components/SubjectSearch";
 import MaterialSearch from "../components/MaterialSearch";
@@ -66,6 +68,112 @@ export default function MainPage() {
   function closeModal() {
     setModalStack([]);
   }
+
+    // WAV 변환 유틸
+  const convertWebmToWav = async (webmBlob) => {
+    const arrayBuffer = await webmBlob.arrayBuffer();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    const wavBuffer = encodeWav(audioBuffer);
+    return new Blob([wavBuffer], { type: 'audio/wav' });
+  };
+
+  const encodeWav = (audioBuffer) => {
+    const numChannels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+    const bitsPerSample = 16;
+    const blockAlign = numChannels * bitsPerSample / 8;
+    const byteRate = sampleRate * blockAlign;
+    const dataLength = audioBuffer.length * blockAlign;
+    const buffer = new ArrayBuffer(44 + dataLength);
+    const view = new DataView(buffer);
+    let offset = 0;
+    const writeString = (str) => {
+      for (let i = 0; i < str.length; i++) view.setUint8(offset++, str.charCodeAt(i));
+    };
+    writeString('RIFF');
+    view.setUint32(offset, 36 + dataLength, true); offset += 4;
+    writeString('WAVE');
+    writeString('fmt ');
+    view.setUint32(offset, 16, true); offset += 4;
+    view.setUint16(offset, 1, true); offset += 2;
+    view.setUint16(offset, numChannels, true); offset += 2;
+    view.setUint32(offset, sampleRate, true); offset += 4;
+    view.setUint32(offset, byteRate, true); offset += 4;
+    view.setUint16(offset, blockAlign, true); offset += 2;
+    view.setUint16(offset, bitsPerSample, true); offset += 2;
+    writeString('data');
+    view.setUint32(offset, dataLength, true); offset += 4;
+    const channelData = Array.from({ length: numChannels }, (_, ch) => audioBuffer.getChannelData(ch));
+    for (let i = 0; i < audioBuffer.length; i++) {
+      for (let ch = 0; ch < numChannels; ch++) {
+        let sample = Math.max(-1, Math.min(1, channelData[ch][i]));
+        sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+        view.setInt16(offset, sample, true);
+        offset += 2;
+      }
+    }
+    return buffer;
+  };
+
+  useEffect(() => {
+    if (!mediaRecorderRef.current) return;
+    const recorder = mediaRecorderRef.current;
+    recorder.onstop = async () => {
+      const webmBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      const wavBlob = await convertWebmToWav(webmBlob);
+      const wavUrl = URL.createObjectURL(wavBlob);
+      setAudioUrl(wavUrl);
+
+      const formData = new FormData();
+      formData.append('file', wavBlob, 'recording.wav');
+      const token = localStorage.getItem('accessToken');
+      try {
+        const resp = await instance.post(
+          '/stt',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        );
+        // const resp = await instance.fetch(
+        //   '/api/stt', {
+        //     method: 'POST',
+        //     body: formData
+        //   }
+        // );
+        console.log('STT 결과:', resp.data);
+      } catch (e) {
+        console.error('STT 호출 오류:', e);
+      }
+    };
+  }, [mediaRecorderRef.current]);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+      mediaRecorderRef.current.ondataavailable = e => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      mediaRecorderRef.current.start();
+      setRecording(true);
+    } catch (err) {
+      console.error('마이크 권한 오류:', err);
+      alert('녹음 권한이 필요합니다.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && recording) {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+    }
+  };
 
 
   // 일정추가 버튼 클릭시 (학습, 시험 일정 통합하여 추가)
@@ -158,51 +266,51 @@ export default function MainPage() {
     }
   };
 
-  useEffect(() => {
-    if (!mediaRecorderRef.current) return;
-    const recorder = mediaRecorderRef.current;
-    recorder.onstop = () => {
-      const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-      const url  = URL.createObjectURL(blob);
-      setAudioUrl(url);
-      // 필요시: URL.revokeObjectURL(url) 로 해제
-    };
-  }, [/* 이펙트가 recorder 로직 이후 실행되도록 deps 조정 */]);
+  // useEffect(() => {
+  //   if (!mediaRecorderRef.current) return;
+  //   const recorder = mediaRecorderRef.current;
+  //   recorder.onstop = () => {
+  //     const blob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+  //     const url  = URL.createObjectURL(blob);
+  //     setAudioUrl(url);
+  //     // 필요시: URL.revokeObjectURL(url) 로 해제
+  //   };
+  // }, []);
 
-  const startRecording = async () => {
-    try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorderRef.current = new MediaRecorder(stream);
-    audioChunksRef.current = [];
+  // const startRecording = async () => {
+  //   try {
+  //   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //   mediaRecorderRef.current = new MediaRecorder(stream);
+  //   audioChunksRef.current = [];
 
-    mediaRecorderRef.current.ondataavailable = e => {
-        // 데이터 청크가 들어올 때마다 배열에 저장
-        if (e.data.size > 0) {
-          audioChunksRef.current.push(e.data);
-        }
-    };
+  //   mediaRecorderRef.current.ondataavailable = e => {
+  //       // 데이터 청크가 들어올 때마다 배열에 저장
+  //       if (e.data.size > 0) {
+  //         audioChunksRef.current.push(e.data);
+  //       }
+  //   };
 
-    mediaRecorderRef.current.onstop = () => { 
-        // 녹음이 멈추면 모든 청크를 blob으로 합쳐 URL 생성
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        const url  = URL.createObjectURL(blob);
-        setAudioUrl(url);
-     };
+    // mediaRecorderRef.current.onstop = () => { 
+    //     // 녹음이 멈추면 모든 청크를 blob으로 합쳐 URL 생성
+    //     const blob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+    //     const url  = URL.createObjectURL(blob);
+    //     setAudioUrl(url);
+    //  };
 
-    mediaRecorderRef.current.start();
-    setRecording(true);
-    } catch(err){
-      console.error('마이크 권한 오류:', err);
-      alert('녹음 권한이 필요합니다.');
-  }
-  };
+  //   mediaRecorderRef.current.start();
+  //   setRecording(true);
+  //   } catch(err){
+  //     console.error('마이크 권한 오류:', err);
+  //     alert('녹음 권한이 필요합니다.');
+  // }
+  // };
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && recording) {
-      mediaRecorderRef.current.stop();
-      setRecording(false);
-    }
-  };
+  // const stopRecording = () => {
+  //   if (mediaRecorderRef.current && recording) {
+  //     mediaRecorderRef.current.stop();
+  //     setRecording(false);
+  //   }
+  // };
 
 
   return (
@@ -347,7 +455,7 @@ export default function MainPage() {
         {/* 실제 녹음 중 모달 창 */}
         {currentModal === 'Recording' && (
           <div>
-            <RecordingModal1
+            <RecordingModal2
               isOpen={ showRecordingModal }
               onClose={()=> setShowRecordingModal(false)}
               studyItem={currentStudyItem}

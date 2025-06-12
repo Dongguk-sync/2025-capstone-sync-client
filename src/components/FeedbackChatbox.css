@@ -1,0 +1,87 @@
+/* 전체 채팅 박스 영역 */
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px); /* 헤더 + 여백 고려한 높이 조절 */
+  padding: 0 16px;
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+/* 채팅 메시지 영역 */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 메시지 스타일 공통 */
+.message {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* 시스템 메시지 (처음 피드백 출력용) */
+.message.system {
+  align-self: center;
+  background-color: #fff;
+  border: #E5E5E5;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* 사용자 메시지 (오른쪽) */
+.message.user {
+  align-self: flex-end;
+  background-color: #E5E5E5;
+  color: #000;
+}
+
+/* AI 응답 메시지 (왼쪽) */
+.message.bot {
+  align-self: flex-start;
+  background-color: #eeeeee;
+  color: #000;
+}
+
+/* 입력창 영역 */
+.input-area {
+  display: flex;
+  margin-top: 8px;
+  border-top: 1px solid #ddd;
+  padding: 12px 0 0;
+  gap: 8px;
+}
+
+/* 입력 필드 */
+.input-area input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* 전송 버튼 */
+.input-area button {
+  background-color: #25365F;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.input-area button:hover {
+  background-color: #25365F;
+  opacity: 0.7;
+}
