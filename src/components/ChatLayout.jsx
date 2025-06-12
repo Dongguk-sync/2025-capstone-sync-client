@@ -1,12 +1,13 @@
-// src/components/ChatLayout.jsx
-import React, { useState } from 'react';
-// import { isToday } from 'date-fns';
-import useLocalStorage from '../hooks/useLocalStorage';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ChatSidebar from './ChatSidebar';
 import ChatWindow from './ChatWindow';
 import ChatInput from './ChatInput';
-import { FaBars, FaChevronLeft } from 'react-icons/fa';
-import { FiMenu } from 'react-icons/fi';
+import {
+  fetchUserHistories,
+  fetchSessionMessages,
+  fetchChatbotResponse
+} from '../services/ChatService';
 import './ChatLayout.css';
 
 // 첫 번째 사용자 발화 기준 단순 요약 함수
@@ -18,28 +19,72 @@ async function generateSummary(messages) {
 }
 
 export default function ChatLayout() {
-  const [sessions, setSessions] = useLocalStorage('sessions', []);
+  const [sessions, setSessions] = useState([]);
   const [currentId, setCurrentId] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const toggleSidebar = () => setSidebarOpen(open => !open);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-    // 메시지 전송: 오늘 세션 사용 또는 새 세션 생성
+
+  // ── 관련 교안 페이지로 이동 ──
+    const handleNavigateToDoc = (docId, historyIndex) => {
+      navigate(`/feedback/${docId}/${historyIndex}`);
+    };
+
+  // ── 세션 선택 시: 메시지 로드 ──
+  const handleSelectSession = useCallback(async (sessionId) => {
+    try {
+      const raw = await fetchSessionMessages(sessionId);
+      const msgs = Array.isArray(raw)
+        ? raw.map(m => ({
+            from: m.sender === 'BOT' ? 'bot' : 'user',
+            text: m.message,
+            timestamp: m.timestamp
+          }))
+        : [];
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, messages: msgs } : s));
+      setCurrentId(sessionId);
+    } catch (err) {
+      console.error('세션 메시지 로드 실패', err);
+    }
+  }, []);
+
+  // ── 마운트 시: 사용자 히스토리 목록 조회 ──
+  useEffect(() => {
+    const userId = 1; // TODO: 로그인 유저 ID로 동적 설정
+    fetchUserHistories(userId)
+      .then(response => {
+        // 응답이 배열이 아닐 경우, 배열 속성을 확인
+        const histArray = Array.isArray(response)
+          ? response
+          : Array.isArray(response.content)
+            ? response.content
+            : [];
+        const mapped = histArray.map(h => ({
+          id: h.id.toString(),
+          title: h.title || new Date(h.createdAt).toLocaleString(),
+          createdAt: h.createdAt,
+          messages: []
+        }));
+        setSessions(mapped);
+        if (mapped.length) {
+          handleSelectSession(mapped[mapped.length - 1].id);
+        }
+      })
+      .catch(err => console.error('히스토리 목록 조회 실패', err));
+  }, [handleSelectSession]);
+
+  // ── 메시지 보내기 ──
   const handleSend = async (text) => {
     if (!text.trim()) return;
     const now = new Date();
-    let sessionId;
+    let sessionId = currentId;
     let updatedSessions;
 
-    if (currentId) {
-      // 기존 세션에 메시지 추가
-      sessionId = currentId;
+    if (sessionId) {
       updatedSessions = sessions.map(s =>
-        s.id === sessionId
-          ? { ...s, messages: [...s.messages, { from: 'user', text }] }
-          : s
+        s.id === sessionId ? { ...s, messages: [...s.messages, { from: 'user', text }] } : s
       );
     } else {
-      // +새 대화 후 첫 메시지: 항상 새 세션 생성
       sessionId = now.getTime().toString();
       updatedSessions = [
         { id: sessionId, title: '', createdAt: now.toISOString(), messages: [{ from: 'user', text }] },
@@ -47,65 +92,73 @@ export default function ChatLayout() {
       ];
     }
 
-    setSessions(updatedSessions);
+    // 요약과 타이틀 업데이트
+    const summary = await generateSummary(updatedSessions.find(s => s.id === sessionId).messages);
+    setSessions(updatedSessions.map(s => s.id === sessionId ? { ...s, title: summary } : s));
     setCurrentId(sessionId);
 
-    // 세션 제목 요약 생성 및 업데이트
-    const session = updatedSessions.find(s => s.id === sessionId);
-    const summary = await generateSummary(session.messages);
-    setSessions(prev =>
-      prev.map(s => (s.id === sessionId ? { ...s, title: summary } : s))
-    );
+    // 로딩 및 임시 텍스트 표시
+    setIsLoading(true);
+    setSessions(prev => prev.map(s =>
+      s.id === sessionId ? { ...s, messages: [...s.messages, { from: 'bot', text: '...' }] } : s
+    ));
 
-    // TODO: 챗봇 API 호출 후 응답 추가 및 재요약
+    try {
+      const aiResponse = await fetchChatbotResponse(sessionId, text);
+      setSessions(prev => prev.map(s => {
+        if (s.id === sessionId) {
+          const msgs = s.messages.slice();
+          const idx = msgs.findIndex(m => m.from === 'bot' && m.text === '...');
+          if (idx !== -1) msgs[idx] = { from: 'bot', text: aiResponse, showButton: true };
+          return { ...s, messages: msgs };
+        }
+        return s;
+      }));
+    } catch (err) {
+      console.error('AI 응답 중 오류 발생:', err);
+      setSessions(prev => prev.map(s => {
+        if (s.id === sessionId) {
+          const msgs = s.messages.slice();
+          const idx = msgs.findIndex(m => m.from === 'bot' && m.text === '...');
+          if (idx !== -1) msgs[idx] = { from: 'bot', text: '오류가 발생했습니다.' };
+          return { ...s, messages: msgs };
+        }
+        return s;
+      }));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // + 새 대화: 초기 화면 전환 (이전 세션 유지)
   const handleNew = () => {
     setCurrentId(null);
   };
 
-  // 세션 초기화: 모든 세션 삭제 -> 프론트엔드 개발용
   const handleReset = () => {
     setSessions([]);
-    localStorage.removeItem('sessions');
     setCurrentId(null);
   };
 
-  // 현재 선택된 세션
   const currentSession = sessions.find(s => s.id === currentId) || null;
 
+  
   return (
     <div className="chat-layout">
-      {/* 사이드바가 열려있는 경우만 나타남 */}
-      <div className={`app-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
-          <aside className="chat-sidebar">
-            <div className="chat-sidebar-header">
-              <p>Sessions</p>
-            </div>
-            <ChatSidebar
-              sessions={sessions}
-              currentId={currentId}
-              onSelect={setCurrentId}
-              onNew={handleNew}
-              onReset={handleReset}
-            />
-          </aside>
-      </div>
-          <button
-            className="sidebar-toggle-btn"
-            onClick={toggleSidebar}
-            aria-label={sidebarOpen ? '사이드바 닫기' : '사이드바 열기'}
-          >
-            {sidebarOpen ? <FaChevronLeft /> : <FaBars />}
-          </button>
-
-      {/* 토글 버튼: 항상 보이도록 aside 바깥에 배치 */}
-      
-      
+      <aside className="chat-sidebar open">
+        <ChatSidebar
+          sessions={sessions}
+          currentId={currentId}
+          onSelect={handleSelectSession}
+          onNew={handleNew}
+          onReset={handleReset}
+        />
+      </aside>
       <div className="chat-main">
-        <ChatWindow session={currentSession} />
-        <ChatInput onSend={handleSend} />
+        <ChatWindow session={currentSession}
+        onNavigateToDoc={handleNavigateToDoc} />
+        <div className="chat-input">
+          <ChatInput onSend={handleSend} disabled={isLoading} />
+        </div>
       </div>
     </div>
   );

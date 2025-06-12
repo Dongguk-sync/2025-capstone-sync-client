@@ -1,0 +1,349 @@
+/* ─── 교안관리 페이지 ─── */
+
+.document-management-page {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10%;
+  height: 100vh;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background: #fff;
+  overflow-y: auto;
+  margin-bottom: 16px;
+}
+
+/* ─── 사이드바 ─── */
+.sidebar {
+  flex: 0 0 260px;
+  height: 100vh;
+  width: 260px;
+  background: #f9f9f9;
+  border-right: 1px solid #e0e0e0;
+  padding: 1rem;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+.sidebar-title {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: #333;
+}
+.folder-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+}
+.folder-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.375rem;
+  justify-content: space-between;
+  cursor: pointer;
+  color: #25365F;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  transition: background 0.2s;
+}
+.folder-item.all {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  color: #25365F;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  transition: background 0.2s;
+}
+
+.folder-item:hover {
+  background: #ececec;
+}
+.folder-item.active {
+  border: 1.5px solid rgba(32, 59, 188, 0.2); /* 컬러 및 불투명도 */
+  box-shadow: 0px 1px 8px 2px rgba(32, 59, 188, 0.2);
+  font-weight: bold;
+}
+.folder-item .folder-icon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+.folder-item.add-folder {
+  border: 1px dashed #ccc;
+  color: #666;
+  font-size: 1rem;
+  align-items: center;
+}
+.add-btn {
+  color: #333;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.folder-item.add-folder:hover {
+  background: #ececec;
+}
+
+.sidebar .folder-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.delete-btn {
+  color: #444;
+}
+
+.edit-btn {
+  color: #444;
+}
+
+
+
+/* ─── 메인 컨텐츠 ─── */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 2rem;
+  padding-top: 10rem;
+  text-align: center;
+  position: static;
+}
+.page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  height: 60px;
+  align-items: center;
+}
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+.summary {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* ─── 툴바 ─── */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.add-doc-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+}
+.add-doc-btn:hover {
+  background: #ececec;
+}
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #fafafa;
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid #ddd;
+  width: 300px;
+}
+.search-icon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  color: #888;
+}
+.search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.875rem;
+  color: #333;
+}
+
+/* ─── 문서 테이블 ─── */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  padding-bottom: 50rem;
+}
+
+
+.doc-table th:nth-child(1) {
+  padding: 0 0;
+}
+
+.doc-table th,
+.doc-table td {
+  padding: 20px 10px;
+  width: 40px;
+  border-bottom: 1px solid #eee;
+  font-size: 0.875rem;
+  color: #444;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+}
+.status-icon .icon {
+  font-size: 1.2rem;
+  color: #25365F;
+  text-align: center;
+}
+.link-btn {
+  background: none;
+  border: none;
+  color: #25365F;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0;
+}
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.icon-new {
+  color: #25365F;
+  font-size: 1rem;
+}
+
+.icon-completed {
+  color: #F87171;
+  font-size: 1rem;
+}
+
+/* ─── 모달창 ─── */
+
+.modal-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+  margin: 0 0 1.5rem 0;
+}
+
+/* drop-zone 기본 스타일 */
+.drop-zone {
+  margin-top: 0.5rem; 
+  margin: 1rem 0;
+  padding: 2rem;
+  border: 2px dashed #ccc;             /* 연한 회색 테두리 */
+  background: rgba(180, 206, 234, 0.1);                   
+  text-align: center;
+  border-radius: 4px;
+  position: relative;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+/* 드래그 오버 시 스타일 */
+.drop-zone.over {
+  border-color: solid rgba(32, 59, 188, 0.2); /* 진한 파란 테두리 */
+  background: rgba(0, 123, 255, 0.1);   /* 아주 옅은 파란 배경 */
+}
+
+/* 아이콘 색상도 바꿔주고 싶다면 */
+.drop-zone.over p,
+.drop-zone.over .folder-icon {
+  color: solid rgba(32, 59, 188, 0.2);;
+}
+
+.drop-zone input[type="file"] {
+  /* 1) 화면에서 숨기되 클릭·드래그 영역으로 남겨둔다 */
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.modal-file-upload{
+  color: #666;
+  align-items: baseline;
+  gap: 0rem;
+  align-items: center;
+}
+.upload-icon {
+  font-size: 1rem;
+}
+
+.modal-submit {
+  display: flex;
+  gap: 0.5rem;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin: 1.5rem auto 0;
+}
+.modal-submit:hover {
+  background: #ececec;
+}
+
+/* ─── 페이지네이션 ─── */
+/* 페이지네이션 텍스트 링크 래퍼 */
+.pagination-text {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+/* 공통 링크 스타일 */
+.page-link {
+  margin: 0 0.5rem;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.page-link:hover {
+  margin: 0 0.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+/* 비활성화된 링크(클릭 무시) */
+.page-link.disabled {
+  color: #ddd;
+  cursor: default;
+  text-decoration: none;
+}
+
+/* 현재 페이지 강조 */
+.page-link.active {
+  font-weight: bold;
+  text-decoration: none;
+  color: #333;
+}
+
+/* ─── 페이지네이션 ─── */
+
+.viewDocModal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.viewDocModal .markdown-body {
+  padding: 1rem;
+}
