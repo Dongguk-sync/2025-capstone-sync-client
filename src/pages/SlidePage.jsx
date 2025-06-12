@@ -13,7 +13,6 @@ import { RiKakaoTalkFill } from 'react-icons/ri';
 import { SiNaver }       from 'react-icons/si';
 
 export default function SlidePage() {
-  console.log("SlidePage 렌더됨");
 
   const [email, setEmail] = useState('');               // 이메일 입력 상태
   const [password, setPassword] = useState('');         // 비밀번호 입력 상태
@@ -46,7 +45,7 @@ export default function SlidePage() {
 
       /* 일반 로그인 버튼 클릭 시 호출되는 함수 */
   const handleLogin = async (e) => {
-    console.log('handleSubmit진입');
+    // console.log('handleSubmit진입');
     e.preventDefault();
     setErrorMsg('');
 
@@ -72,11 +71,11 @@ export default function SlidePage() {
       const userId = res.data.content?.user_id;
       const userEmail = res.data.content?.user_email;
 
-      console.log('■ 서버로부터 받은 값 ■');
-      console.log('token:', token);
-      console.log('userId:', userId);
-      console.log('userEmail:', userEmail);
-      console.log('───────────────');
+      // console.log('■ 서버로부터 받은 값 ■');
+      // console.log('token:', token);
+      // console.log('userId:', userId);
+      // console.log('userEmail:', userEmail);
+      // console.log('───────────────');
 
 
       if (token && userId && userEmail) {

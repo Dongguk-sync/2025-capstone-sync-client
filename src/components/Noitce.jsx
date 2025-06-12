@@ -37,8 +37,10 @@ const Notice = ({ reloadTrigger }) =>{
                 const raw = res?.data?.content;
                 let exams = Array.isArray(raw) ? raw : [raw];
                 const today = new Date();
+                today.setHours(0,0,0,0);
                 const withDDay = exams.map((item, index) => {
                     const examDate = new Date(item.exam_schedule_date);
+                    examDate.setHours(0,0,0,0);
                     const diffTime = examDate - today;
                     const dday = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     return {
@@ -75,8 +77,10 @@ const Notice = ({ reloadTrigger }) =>{
                     {upcomingExams.length > 0 ? ( 
                         upcomingExams.map((item, index) => (
                             <div className="ToOneExam" key={`${item.subject}-${index}`}>
-                                <div>{item.subject}</div>
-                                <div>{item.dday === 0 ? 'D-day' :`D-${item.dday}`}</div>
+                                <div className="subject">{item.subject}</div>
+                                <div className={`dday ${item.dday === 0 ? 'dday-today' : ''}`}>
+                                    {item.dday === 0 ? 'D-day' :`D-${item.dday}`}
+                                </div>
                             </div>
                         ))
                     ):(<div className="no-exams">예정된 시험이 없습니다.</div>)

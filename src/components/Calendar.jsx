@@ -7,6 +7,9 @@ import testImage from "../assets/test.png";
 import  { getCurrentUser } from '../api/axios';
 import axios from 'axios';
 
+// 임시(학습)
+// import { getSchedulesInRange as getMockStudies } from '../data/calendarService';
+
 
 const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -16,8 +19,8 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const [examSchedules, setExamSchedules] = useState([]);
     const [monthExams, setMonthExams] = useState({});
 
-      // --- 월간 학습 + 시험 불러오기 (전체 → 클라이언트 필터) ---
-  useEffect(() => {
+
+    useEffect(() => {
     // console.log("calendar useEffect", reloadTrigger);
     (async () => {
       try {
@@ -30,13 +33,13 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
         const token = localStorage.getItem('accessToken');
 
         // 2) 학습일정 전체
-        // const studiesRes = await axios.get(
-        //   `/api/study-schedules/user-id/${userId}`,
-                // {headers: {Authorization: `Bearer ${token}`}}
-        // );
-        // const allStudies = Array.isArray(studiesRes.data.content)
-        //   ? studiesRes.data.content
-        //   : [studiesRes.data.content];
+        const studiesRes = await axios.get(
+          `/api/study-schedules/user-id/${userId}`,
+                {headers: {Authorization: `Bearer ${token}`}}
+        );
+        const allStudies = Array.isArray(studiesRes.data.content)
+          ? studiesRes.data.content
+          : [studiesRes.data.content];
 
         // 3) 시험일정 전체      
         const examsRes = await axios.get(
@@ -49,15 +52,17 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
           : [examsRes.data.content];
 
         // — 학습: 월간 범위 필터 + 날짜별 맵핑
-        // const filteredStudies = allStudies.filter(item =>
-        //   item.date >= monthStart && item.date <= monthEnd
-        // );
-        // const studyMap = filteredStudies.reduce((acc, item) => {
-        //   acc[item.date] = acc[item.date] || [];
-        //   acc[item.date].push(item);
-        //   return acc;
-        // }, {});
-        // setMonthSchedules(studyMap);
+        const filteredStudies = allStudies.filter(item =>
+          item.study_schedule_date >= monthStart && 
+          item.study_schedule_date <= monthEnd
+        );
+        const studyMap = filteredStudies.reduce((acc, item) => {
+          const key = item.study_schedule_date;
+          acc[key] = acc[key] || [];
+          acc[key].push(item);
+          return acc;
+        }, {});
+        setMonthSchedules(studyMap);
 
         // — 시험: 월간 범위 필터 + 날짜별 맵핑
         const filteredExams = allExams.filter(item =>
@@ -92,7 +97,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const token = localStorage.getItem('accessToken');
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     await axios.delete(
-      `/api/study-schedules/${id}`,
+      `/api/study-schedules/id/${id}`,
       {headers: {Authorization: `Bearer ${token}`}}
 
     );

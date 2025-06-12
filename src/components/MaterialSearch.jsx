@@ -1,46 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import './SearchModal.css';
+import instance from "../api/axios";
 
-/**
- * props:
- *  - subjectId: 선택된 과목의 ID
- *  - onSelect(material) : 사용자가 교안을 클릭했을 때 호출
- */
-export default function MaterialSearch({ subjectId, onSelect }) {
+export default function MaterialSearch({ subjectName, subjectId, onSelect }) {
   const [query, setQuery] = useState('');
   const [materials, setMaterials] = useState([]);
 
-  // subjectId가 바뀔 때마다 해당 과목 교안 목록 로드
+    // subjectId가 바뀔 때마다 해당 과목 교안 목록 로드
   useEffect(() => {
-    if(!subjectId){
+    if (!subjectId) {
       setMaterials([]);
       return;
     }
 
     async function fetchMaterials() {
-      // TODO: 실제 API 호출
-      const mock = {
-        eng: [
-          { id: 'eng1', title: '영어문법 기초' },
-          { id: 'eng2', title: '영어회화 연습' },
-        ],
-        math: [
-          { id: 'mat1', title: '미적분 요약' },
-          { id: 'mat2', title: '기하 문제풀이' },
-        ],
-        cs: [
-          { id: 'cs1', title: '자료구조' },
-          { id: 'cs2', title: '알고리즘' },
-        ],
-      };
-      setMaterials(mock[subjectId] || []);
+      try {
+        // API 호출: /api/answer-files/subject-id/{subjectId}
+        const res = await instance.get(`/answer-files/subject-id/${subjectId}`);
+        const raw = res.data.content;
+        const list = Array.isArray(raw) ? raw : [raw];
+
+        const mapped = list.map(item => ({
+          id:    item.file_id,
+          title: item.file_name
+        }));
+
+        setMaterials(mapped);
+      } catch (err) {
+        console.error('교안 목록 로드 실패:', err);
+        setMaterials([]);
+      }
     }
+
     fetchMaterials();
   }, [subjectId]);
 
   const filtered = materials.filter(m =>
     m.title.includes(query)
   );
+
+
+  if(subjectId && materials.length === 0) {
+    return (
+      <div>
+        <p>{subjectName} 과목에 등록된 교안이 아직 없습니다.</p>
+        <p>먼저 교안 관리 페이지에서 교안을 추가해주세요.</p>
+      </div>
+    )
+  }
 
   if(!subjectId) {
     return (

@@ -89,10 +89,6 @@ export default function MyAccount() {
         }
         setPasswordLoading(true);
         try {
-            // const userRes = await instance.get(`/users/id/${userData.user_id}`);
-            // const oldHashed = userRes.data.content.user_password;
-            // console.log('기존 비밀번호: ', oldHashed);
-
             await instance.patch(
                 `/users/${userData.user_id}/password`, 
                 { new_password: newPassword }
@@ -150,8 +146,9 @@ export default function MyAccount() {
                         <button
                             // 아직 프로필 생성 구현 X
                             // onClick={handleButtonClick}
-                            className="">
-                                {isEditing ? (loading ? '저장중...' : '저장') : '수정(아직 구현X)'}
+                            className="edit-button">
+                                {/* {isEditing ? (loading ? '저장중...' : '저장') : '수정(아직 구현X)'} */}
+                                {isEditing ? (loading ? '저장중...' : '저장') : '수정'}
                             </button>
                     </div>
                 </div>
@@ -161,13 +158,6 @@ export default function MyAccount() {
                 <label>비밀번호</label>
                 {isPasswordEditing ? (
                     <div className="passwordChange">
-                        {/* <input
-                            현재 비밀번호 비교하는게 없기에 사실상 의미 없음
-                            type="password"
-                            placeholder="현재 비밀번호"
-                            value={oldPassword}
-                            onChange={e => setOldPassword(e.target.value)}
-                        /> */}
                         <input
                             type="password"
                             placeholder="새 비밀번호"
@@ -181,21 +171,24 @@ export default function MyAccount() {
                             onChange={e => setConfirmPassword(e.target.value)}
                         />
                         {passwordError && <div className="error-message">{passwordError}</div>}
-                        <button 
-                            onClick={handlePasswordChange} 
-                            disabled={passwordLoading} >
-                        {passwordLoading ? '변경중...' : '비밀번호 저장'}
-                        </button>
+                        <div className="button-group">
+                            <button 
+                                onClick={handlePasswordChange} 
+                                disabled={passwordLoading} >
+                            비밀번호 저장
+                            </button>
 
-                        <button 
-                            onClick={() => setIsPasswordEditing(false)} 
-                            disabled={passwordLoading} >
-                            취소
-                        </button>
+                            <button 
+                                className="password-cancel-btn"
+                                onClick={() => setIsPasswordEditing(false)} 
+                                disabled={passwordLoading} >
+                                취소
+                            </button>
+                        </div>
                     </div>
                 ) : (
                             <div className="password">
-                                <div>비밀번호 변경일 : 2025년 6월 8일</div>
+                                <div>정기적인 비밀번호 변경은 계정 보안을 강화하는 데 도움이 됩니다.</div>
                                 <button className="password_btn" onClick={() => setIsPasswordEditing(true)}>
                                     비밀번호 변경
                                 </button>

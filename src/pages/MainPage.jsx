@@ -47,8 +47,6 @@ export default function MainPage() {
 
   // 학습 등록하면 바로 달력에 반영되도록
   const [reloadCalendar, setReloadCalendar] = useState(0);
-  const [schedules, setSchedules] = useState([]);
-
   const [mode, setMode] = useState('study');
 
   function openModal(type) {
@@ -101,7 +99,7 @@ export default function MainPage() {
     const payload = {
       study_schedule_date: format(selectedDate, 'yyyy-MM-dd'),
       subject_id: subject.id,
-      material_id: material.id,
+      file_id: material.id,
       user_id: userId
     };
 
@@ -334,6 +332,7 @@ export default function MainPage() {
               <div>교안 검색</div>
               <div className="searchContent">
                 <MaterialSearch
+                  subjectName = {subject.name}
                   subjectId={subject.id}
                   onSelect={mat => {
                     setMaterial(mat);

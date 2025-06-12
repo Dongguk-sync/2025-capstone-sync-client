@@ -52,7 +52,8 @@
 
 .exam-count{
     font-size: 0.8rem;
-    background-color: var(--color-sub);
+    /* background-color: var(--color-sub); */
+    background-color: #61ABE1 ;
 }
 
 .cell-count {
@@ -65,8 +66,8 @@
 }
 
 .cell.selected { 
-    background-color: var(--color-point);
-    /* background: #bee3f8;  */
+    /* background-color: var(--color-point); */
+    background-color: #E6EEFF;
 }
 
 
@@ -179,7 +180,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    background-color: var(--color-point);
+    background-color: var(--color-sub);
     border-radius: 20px;
     padding: 10px;
 }
@@ -207,7 +208,7 @@
 
 /* 전체 박스 */
 .examSection {
-  background: var(--color-point);
+  background: var(--color-sub);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 1rem;

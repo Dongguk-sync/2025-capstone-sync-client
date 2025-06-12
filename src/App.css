@@ -1,7 +1,8 @@
 :root {
   --color-main: rgb(37, 54, 95);
-  --color-sub: rgb(57, 150, 218);
+  --color-sub: rgb(215, 235, 248);
   --color-point: rgb(255, 247, 216);
+
   --header-height: 70px;
   --sidebar-width: 260px;
 }
