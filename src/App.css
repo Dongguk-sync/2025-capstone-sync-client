@@ -22,7 +22,7 @@ body {
 
 .app-container {
     padding: 0 50px;
-    padding-bottom: 10px;
+    /* padding-bottom: 10px; */
     display: flex;
     flex-direction: column;
 }
