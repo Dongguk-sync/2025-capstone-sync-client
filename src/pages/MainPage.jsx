@@ -15,6 +15,8 @@ import MaterialSearch from "../components/MaterialSearch";
 import { format } from 'date-fns';
 import AddStudy from "../components/AddStudyModal";
 import AddExam from "../components/AddExamModal";
+import { useNavigate } from "react-router-dom"
+import ProgressModal from "../components/ProgressModal";
 
 
 import instance, {getCurrentUser} from "../api/axios";
@@ -49,6 +51,12 @@ export default function MainPage() {
   const [mode, setMode] = useState('study');
 
   const [audioStream, setAudioStream] = useState(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  // const [currentStudyId, setCurrentStudyId] = useState(null);
+
+  const navigate = useNavigate();
 
   function openModal(type) {
     setModalStack(prev =>{
@@ -186,6 +194,20 @@ export default function MainPage() {
     for (let pair of fd.entries()){
       console.log(pair[0] + ':', pair[1]);
     }
+    setIsSubmitting(true);
+    setProgress(0);
+
+    // 진행률
+    const FAKE_DURATION = 100_000;
+    const interval = 500;
+    const maxFake = 90;
+    let elapsed = 0;
+    const timer = setInterval(() => {
+      elapsed += interval;
+      const pct = Math.min(maxFake, Math.round((elapsed/FAKE_DURATION) * maxFake));
+      setProgress(pct);
+    }, interval);
+
     const token = localStorage.getItem("accessToken");
     console.log(token);
     try {
@@ -200,9 +222,19 @@ export default function MainPage() {
           }
         }
       );
+      clearInterval(timer);
+
+      setProgress(100);
+      setTimeout(() => {
+        setIsSubmitting(false);
+        navigate(`/studys/result/${resp.data.content.studys_id}`);
+      }, 300);
+      
       console.log("채점 결과:", resp.data);
       // TODO: resp.data를 상태에 저장하거나, 모달 닫고 UI 갱신
     } catch (err) {
+      clearInterval(timer);
+      setIsSubmitting(false);
       console.error("채점 API 호출 오류:", err);
       alert("채점 요청에 실패했습니다.");
     }
@@ -520,6 +552,10 @@ export default function MainPage() {
               onSubmit={handleSubmitRecording}
               onRestart={handleRestartRecording}
             />
+
+            <ProgressModal
+              open={isSubmitting}
+              progress={progress} />
           </div>
         )}
       </Modal>
