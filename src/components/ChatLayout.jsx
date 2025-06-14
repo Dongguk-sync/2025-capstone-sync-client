@@ -31,6 +31,7 @@ export default function ChatLayout() {
   const [sessions, setSessions] = useState([]);
   const [currentId, setCurrentId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
 
 
@@ -46,16 +47,24 @@ export default function ChatLayout() {
       // console.log('fetchSessionMessages raw: ', raw);
 
       const dataArray = Array.isArray(raw)
-        ? raw
-        :Array.isArray(raw.content)
-          ? raw.content
-          : [];
+      ? raw
+      : Array.isArray(raw.content)
+      ? raw.content
+      : [];
+      // const dataArray = Array.isArray(raw)
+      //   ? raw
+      //   :Array.isArray(raw.content)
+      //     ? raw.content
+      //     : [];
       // console.log('messages array: ', dataArray);
 
       const msgs = dataArray.map(m => ({
         from: m.message_type === 'AI' ? 'bot' : 'user',
         text: m.message_content,
-        timestamp: m.timestamp_create_at
+        timestamp: m.timestamp_create_at,
+        file_url: m.file_url,
+        file_name: m.file_name,
+        subject_name: m.subject_name,
       }));
       // console.log('mapped msg: ', msgs);
 
@@ -74,15 +83,16 @@ export default function ChatLayout() {
       console.error('세션 메시지 로드 실패', err);
     }
   }, []);
+
   useEffect(() => {
   async function loadHistories() {
     try {
       // 1) 실제 로그인된 유저 정보 가져오기
       const userRes = await getCurrentUser();
-      const userId = userRes.content.user_id;
+      setUserId(userRes.content.user_id);
 
       // 2) 해당 유저의 히스토리 불러오기
-      const histories = await fetchUserHistories(userId);
+      const histories = await fetchUserHistories(userRes.content.user_id);
       const histArray = Array.isArray(histories) ? histories : histories.content;
 
       // 3) 세션 상태 셋업 (history_first_question이 비어 있으면 메시지에서 첫 질문을 요약)
@@ -133,66 +143,191 @@ export default function ChatLayout() {
   loadHistories();
 }, [handleSelectSession]);
 
+
   // ── 메시지 보내기 ──
   const handleSend = async (text) => {
     if (!text.trim()) return;
+    setIsLoading(true);
+
     const now = new Date();
+    const isNewSession = !currentId;
     let sessionId = currentId;
     let updatedSessions;
 
-    if (sessionId) {
-      updatedSessions = sessions.map(s =>
-        s.id === sessionId ? { ...s, messages: [...s.messages, { from: 'user', text }] } : s
-      );
-    } else {
-      sessionId = now.getTime().toString();
-      updatedSessions = [
-        { id: sessionId, title: '', createdAt: now.toISOString(), messages: [{ from: 'user', text }] },
-        ...sessions
-      ];
+    updatedSessions = prev => {
+      if(isNewSession) {
+        sessionId = now.getTime().toString();
+        return [
+          {
+            id: sessionId,
+            title: '',
+            createdAt: now.toISOString(),
+            messages: [{ from: 'user', text }, { from: 'bot', text: '…', showButton: false }]
+          },
+          ...prev
+        ];
+      } else {
+        return prev.map(s => 
+          s.id === currentId
+            ? {
+              ...s,
+              messages: [
+                ...s.messages, 
+                { from: 'user', text }, 
+                { from: 'bot', text: '…', showButton: false }]
+            }
+          : s
+        )
+      }
     }
 
+    const current = sessions.find(s => s.id === sessionId);
+
+    if(current) {
+      const summayText = await generateSummary(current.messages);
+      setSessions(prev => 
+        prev.map(s =>
+          s.id === sessionId
+            ? {...s, title: summayText}
+            :s
+        )
+      )
+    }
     setSessions(updatedSessions);
     setCurrentId(sessionId);
 
-    // 요약과 타이틀 업데이트
-    const summary = await generateSummary(updatedSessions.find(s => s.id === sessionId).messages);
-    setSessions(updatedSessions.map(s => s.id === sessionId ? { ...s, title: summary } : s));
-    setCurrentId(sessionId);
-
-    // 로딩 및 임시 텍스트 표시
-    setIsLoading(true);
-    setSessions(prev => prev.map(s =>
-      s.id === sessionId ? { ...s, messages: [...s.messages, { from: 'bot', text: '...' }] } : s
-    ));
-
-    try {
-      const aiResponse = await fetchChatbotResponse(sessionId, text);
-      console.log('AI 응답: ', aiResponse);
-      
-      setSessions(prev => prev.map(s => {
-        if (s.id === sessionId) {
-          const msgs = s.messages.slice();
-          const idx = msgs.findIndex(m => m.from === 'bot' && m.text === '...');
-          if (idx !== -1) msgs[idx] = { from: 'bot', text: aiResponse, showButton: true };
-          return { ...s, messages: msgs };
+      try {
+        const resp = await fetchChatbotResponse(
+          userId, 
+          sessionId,
+          text
+        );
+        // resp.content 아래에 실제 데이터가 있습니다
+        console.log('호출 직후 resp= ', resp);
+        
+        if(!resp.success || !resp.content) {
+          console.error('API 응답 오류: ', resp.error);
+          alert('메시지를 저장할 수 없습니다. 다시 시도해주세요.');
+          return;
         }
-        return s;
-      }));
-    } catch (err) {
-      console.error('AI 응답 중 오류 발생:', err);
-      setSessions(prev => prev.map(s => {
-        if (s.id === sessionId) {
-          const msgs = s.messages.slice();
-          const idx = msgs.findIndex(m => m.from === 'bot' && m.text === '...');
-          if (idx !== -1) msgs[idx] = { from: 'bot', text: '오류가 발생했습니다.' };
-          return { ...s, messages: msgs };
-        }
-        return s;
-      }));
-    } finally {
-      setIsLoading(false);
-    }
+        // if(!resp.success || !resp.content  || resp.content.message_content == null) {
+        //   console.log('API 응답 오류: ', resp);
+        //   resp.content = {
+        //     ...resp.content,
+        //     message_content: '[AI 응답이 없습니다 ]'
+        //   }
+
+        //   const botReply = resp.content.message_content;
+
+        //   setSessions(prev => 
+        //     prev.map(s => 
+        //       s.id === sessionId
+        //       ? {...s, messages: [...s.messages, {from: 'bot', text: botReply}]}
+        //       : s
+        //     )
+        //   )
+        //   setIsLoading(false);
+        //   alert('AI응답을 받을 수 없습니다.');
+        //   return;
+        // }
+        // const botText = resp.content?.message_content ?? '[AI 응답이 없습니다]';
+        // setSessions(prev =>
+        //   prev.map(s =>
+        //     s.id === sessionId
+        //     ? {...s, messages: [...s.messages, {from: 'bot', text: botText}]}
+        //     : s
+        //   )
+        // )
+        // const botText = resp.content.message_content;
+        // setSessions(prev => 
+        //   prev.map(s => 
+        //     s.id === sessionId
+        //       ? {
+        //         ...s,
+        //         messages: [...s.messages, {from: 'bot', text: botText}]
+        //       }
+        //       :s
+        //   )
+        // )
+
+        // const newId = String(resp.content.chat_bot_history_id);
+        
+        // const historyId = resp.content.chat_bot_history_id;
+        // const botReply  = resp.content.message_content;
+        // const newSessionId = historyId.toString();
+
+        // const summaryText = await generateSummary(
+        //   sessions.find(s => s.id === sessionId).messages.map(m =>
+        //     m.text === '...' ? {...m, text: botReply} : m
+        //   )
+        // );
+        // setSessions(prev => 
+        //   prev.map(s => {
+        //     if(s.id !== sessionId) return s;
+        //     const newMessages = s.messages.map(m =>
+        //       m.text === '...'
+        //       ? {from :'bot', text: botReply, showButton: true}
+        //       : m
+        //     );
+        //     return {
+        //       ...s,
+        //       id: newId,
+        //       messages: newMessages,
+        //       title: summaryText
+        //     }
+        //   })
+        // )
+        // setCurrentId(newId);
+
+        // setSessions(updatedSessions);
+        // setCurrentId(sessionId);
+
+        const { chat_bot_history_id, message_content, file_url } = resp.content;
+        const newId = String(chat_bot_history_id);
+        
+        let updatedMessages = [];
+
+        setSessions(prev =>
+          prev.map(s => {
+            if (s.id !== sessionId) return s;
+
+            updatedMessages = s.messages.map(m =>
+              m.from === 'bot' && m.text === '...'
+              ? {
+                  from: 'bot', 
+                  text: message_content, 
+                  showButton: !file_url,
+                  file_url: file_url
+                } 
+              : m
+            );
+
+            return {
+              ...s,
+              id: newId,
+              messages: updatedMessages
+            };
+      })
+        )
+        setCurrentId(newId);
+
+
+        const newTitle = await generateSummary(updatedMessages);
+        setSessions(prev =>
+          prev.map(s =>
+            s.id === newId
+            ? {...s, title: newTitle}
+            : s
+          )
+        )
+
+        await handleSelectSession(newId);
+
+      } catch(err) {
+        console.log('AI 응답 중 오류 발생: ', err);
+      } finally {
+        setIsLoading(false);
+      }
   };
 
   const handleNew = () => {

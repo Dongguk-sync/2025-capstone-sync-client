@@ -28,23 +28,27 @@ export async function fetchSessionMessages(sessionId) {
 
 // 3) 챗봇에 메시지 전송 → AI 응답 받기
 // 미완성 (api 주소 변경해야함)
-export async function fetchChatbotResponse(sessionId, message) {
-  const payload = { 
-    chat_bot_history_id: sessionId, 
+export async function fetchChatbotResponse(userId, historyId, text) {
+  // const response = await axios.post('/chatbot-messages', {
+  //   // chat_bot_history_id: historyId ? Number(historyId) : null,
+  //   ...(historyId == null) 
+  //     ? { chat_bot_history_id: null}
+  //     : {chat_bot_history_id: Number(historyId)};
+  //   user_id: userId,
+  //   message_type: 'HUMAN',
+  //   message_content: text
+  // });
+  // return response.data;
+  const body = {
+    user_id: userId,
     message_type: 'HUMAN',
-    message_content: message };
+    message_content: text
+  };
+  // historyId가 있을 때만 키를 추가
+  if (historyId != null) {
+    body.chat_bot_history_id = Number(historyId);
+  }
 
-  const { data } = await axios.post(
-    '/chatbot-messages',
-    payload
-  );
-  console.log('응답 전체: ', data);
-  if(!data.success) {
-    throw new Error(data.err || 'AI 응답을 가져오는데 실패했습니다.');
-  }
-  if(!data.content) {
-    throw new Error('서버에서 응답 내용을 찾을 수 없습니다.');
-  }
-  // { response: "AI 답변 텍스트" } 형태로 온다고 가정
-  return data.content.message_content;
+  const { data } = await axios.post('/chatbot-messages', body);
+  return data;
 }

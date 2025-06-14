@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 export default function ChatWindow({ session, onNavigateToDoc }) {
   const endRef = useRef(null);
+
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [session?.messages]);
@@ -33,13 +34,26 @@ export default function ChatWindow({ session, onNavigateToDoc }) {
       {session.messages.map((m, i) => (
         <div key={i} className={`chat-message ${m.from}`}>
           {m.text}
-          {m.showButton && (
+          {/* {m.showButton && (
             <button
               className="go-to-doc-button"
               onClick={() => onNavigateToDoc(session.id, i)}
             >
               관련 교안으로 이동하기
             </button>
+          )} */}
+          {m.file_url && (
+            <>
+              <br/>
+              <button 
+                className="go-to-doc-button"
+                onClick={() => onNavigateToDoc(m.file_url)}
+              >관련 교안으로 이동하기 <br/>
+                
+                {m.subject_name && `${m.subject_name} · `}
+                {m.file_name}
+              </button>
+            </>
           )}
         </div>
       ))}
