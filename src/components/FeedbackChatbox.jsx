@@ -1,3 +1,4 @@
+// FeedbackChatbot.jsx
 import React, { useEffect, useRef, useState } from 'react';
 import axios from '../api/axios';
 import './FeedbackChatBox.css';
@@ -18,6 +19,7 @@ export default function FeedbackChatBox({
   const loadMessages = async (baseMessages = []) => {
     try {
       const res = await axios.get(`/study-messages/studys-id/${studysId}`);
+      console.log('loadMessages response: ', res.data);
       const chatMessages = (res.data.content || []).map(msg => ({
         from: msg.message_type === 'AI' ? 'bot' : 'user',
         text: msg.sm_content
