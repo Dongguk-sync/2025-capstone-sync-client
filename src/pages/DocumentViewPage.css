@@ -3,7 +3,7 @@ body, html {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 /* 페이지 전체 */
@@ -20,11 +20,11 @@ body, html {
 .back-btn {
   position: fixed;
   top: 50px;
-  left: 150px;
+  left: 50px;
   z-index: 1000;
   padding: 8px 12px;
   font-size: 16px;
-  background-color: white;
+  background-color: transparent;
   cursor: pointer;
 }
 
@@ -47,7 +47,7 @@ body, html {
 
 .scrollable-content {
   position: absolute;
-  top: 90px; /* 고정 요소들보다 아래로 */
+  top: 150px; /* 고정 요소들보다 아래로 */
   bottom: 0;
   left: 300px;
   right: 300px;

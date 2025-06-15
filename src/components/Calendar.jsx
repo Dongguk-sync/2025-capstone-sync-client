@@ -5,7 +5,9 @@ import Study from './Study';
 import {FaTrash} from 'react-icons/fa'
 import testImage from "../assets/test.png";
 import  { getCurrentUser } from '../api/axios';
-import axios from 'axios';
+import axios from '../api/axios';
+import { useNavigate } from "react-router-dom";
+
 
 // 임시(학습)
 // import { getSchedulesInRange as getMockStudies } from '../data/calendarService';
@@ -19,7 +21,8 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const [examSchedules, setExamSchedules] = useState([]);
     const [monthExams, setMonthExams] = useState({});
 
-
+    const navigate = useNavigate();
+ 
     useEffect(() => {
     // console.log("calendar useEffect", reloadTrigger);
     (async () => {
@@ -34,7 +37,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
 
         // 2) 학습일정 전체
         const studiesRes = await axios.get(
-          `/api/study-schedules/user-id/${userId}`,
+          `/study-schedules/user-id/${userId}`,
                 {headers: {Authorization: `Bearer ${token}`}}
         );
         const allStudies = Array.isArray(studiesRes.data.content)
@@ -43,7 +46,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
 
         // 3) 시험일정 전체      
         const examsRes = await axios.get(
-          `/api/exam-schedules/user-id/${userId}`,
+          `/exam-schedules/user-id/${userId}`,
           {headers: {Authorization: `Bearer ${token}`}}
         );
         // console.log('allExams raw: ', examsRes.data.content);
@@ -97,7 +100,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const token = localStorage.getItem('accessToken');
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     await axios.delete(
-      `/api/study-schedules/id/${id}`,
+      `/study-schedules/id/${id}`,
       {headers: {Authorization: `Bearer ${token}`}}
 
     );
@@ -109,11 +112,65 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
     const token = localStorage.getItem('accessToken');
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
     await axios.delete(
-      `/api/exam-schedules/${id}`,
+      `/exam-schedules/${id}`,
       {headers: {Authorization: `Bearer ${token}`}}
 
     );
     onReload();
+  };
+
+  const handleViewResult = async (doc) => {
+    try {
+      const fileId = doc.file_id;
+
+      const resp = await axios.get(`/studys/file-id/${fileId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      })
+      // console.log("GET /studys/file-id res: ", resp.data.content);
+      const studyArr = resp.data.content || [];
+
+      if(studyArr.length === 0) {
+        alert('학습 결과가 없습니다.')
+        return;
+      }
+      const latestRound = Math.max(...studyArr.map(s => s.studys_round))
+
+      navigate(
+        `/feedback/${fileId}/${latestRound}`,
+        {
+          state: {
+            file_id: fileId,
+            file_name: doc.file_name,
+            subject_id:   doc.subject_id,
+            subject_name: doc.subject_name,
+            latestRound,
+            studyArr
+          }
+        } 
+      )
+
+      // let subjectName = doc.subject_name;
+      // if (!subjectName && folders) {
+      //   const folder = folders.find(f => f.id === doc.subject_id);
+      //   subjectName = folder ? folder.name : '';
+      // }
+
+      // navigate(`/feedback/${doc.file_id}/${latestRound}`, {
+      //   state: {
+      //     file_id: doc.file_id,
+      //     file_name: doc.file_name,
+      //     subject_id: doc.subject_id,
+      //     subject_name: subjectName,
+      //     latestRound,
+      //     studyArr,
+      //   }
+      // });
+    } catch (err) {
+      console.error("피드백 로딩 실패:", err);
+      alert("피드백을 불러오는데 실패했습니다.");
+    }
   };
     
 
@@ -236,7 +293,7 @@ const Calendar = ({onAddSchedule , onStartStudy, reloadTrigger, onReload }) => {
                     schedules={dailySchedules}
                     onDelete={handleDelete}
                     onStartStudy={onStartStudy}
-                    // onViewResult={}
+                    onViewResult={handleViewResult}
                     // 나중에 교안관리 완성되고 결과 페이지
                     // 완성되면 연결
                   />

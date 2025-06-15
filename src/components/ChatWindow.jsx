@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
+
+
 export default function ChatWindow({ session, onNavigateToDoc }) {
   const endRef = useRef(null);
 
@@ -43,17 +45,17 @@ export default function ChatWindow({ session, onNavigateToDoc }) {
             </button>
           )} */}
           {m.file_url && (
-            <>
-              <br/>
+            <div className="chat-to-file">
+              <div>
+                {m.subject_name} : {m.file_name}
+              </div>
               <button 
                 className="go-to-doc-button"
                 onClick={() => onNavigateToDoc(m.file_url)}
               >관련 교안으로 이동하기 <br/>
                 
-                {m.subject_name && `${m.subject_name} · `}
-                {m.file_name}
               </button>
-            </>
+            </div>
           )}
         </div>
       ))}

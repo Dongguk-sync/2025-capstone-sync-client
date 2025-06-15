@@ -1,5 +1,4 @@
-import {  FaBook } from 'react-icons/fa';
-import { useEffect } from 'react';
+import { FaBook } from 'react-icons/fa';
 import '../pages/FeedbackPage.css';
 
 export default function SidebarFeedback({
@@ -8,52 +7,50 @@ export default function SidebarFeedback({
   setSelectedDocument,
   selectedHistory,
   setSelectedHistory,
-  docId,
-  historyIndex,
-}) 
-  {
-    useEffect(() => {
-      if (!selectedDocument && docId && documents.length > 0) {
-        const doc = documents.find(d => d.id === Number(docId));
-        if (doc) {
-          setSelectedDocument(doc);
-          const history = doc.histories[Number(historyIndex)];
-          if (history) {
-            setSelectedHistory(history);
-          }
-        }
-      }
-    }, [docId, historyIndex, documents]);
+}) {
+  // 교안 선택 시 회차 자동 선택
+  const handleSelectDocument = (document) => {
+    setSelectedDocument(document);
+    // 가장 최근 회차로 선택
+    if (document.histories && document.histories.length > 0) {
+      setSelectedHistory(document.histories[document.histories.length - 1]);
+    } else {
+      setSelectedHistory(null);
+    }
+  };
 
-    
   return (
-    <aside className="sidebar">
-      <h2 className="sidebar-title">학습 교안</h2>
+    <aside className="sidebar-feedback">
+      <h2 className="sidebar-title">학습 결과</h2>
       <ul className="folder-list">
         {documents.map(document => (
-          <li key={document.id}>
-            {/* 교안 */}
+          <li key={document.file_id}>
+            {/* 교안 버튼 */}
             <button
-              className={`folder-label ${selectedDocument?.id === document.id ? 'active' : ''}`}
-              onClick={() => setSelectedDocument(document)}
+              className={`folder-label ${selectedDocument?.file_id === document.file_id ? 'active' : ''}`}
+              onClick={() => handleSelectDocument(document)}
             >
               <FaBook className="book-icon" />
-              <span>{document.name}</span>
+              <span>{document.file_name}</span>
             </button>
 
-            {/* 회차 */}
-            {selectedDocument?.id === document.id && (
+            {/* 회차 목록 */}
+            {selectedDocument?.file_id === document.file_id && (
               <ul className="history-list">
-                {document.histories.map((history, index) => (
-                  <li key={index}>
-                    <button
-                      className={`history-item ${selectedHistory === history ? 'active' : ''}`}
-                      onClick={() => setSelectedHistory(history)}
-                    >
-                      {history}
-                    </button>
-                  </li>
-                ))}
+                {(document.histories || []).length > 0 ? (
+                  document.histories.map((history, idx) => (
+                    <li key={idx}>
+                      <button
+                        className={`history-item ${selectedHistory === history ? 'active' : ''}`}
+                        onClick={() => setSelectedHistory(history)}
+                      >
+                        {history}회차
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <li><span>회차 없음</span></li>
+                )}
               </ul>
             )}
           </li>

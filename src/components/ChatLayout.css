@@ -276,7 +276,7 @@ html, body, #root {
 
 .go-to-doc-button {
   margin-top: 10px;
-  background-color: #667085;
+  background-color: #5a7db8;
   color: #ffffff;
   padding: 6px 12px;
   border: none;
@@ -287,5 +287,15 @@ html, body, #root {
 }
 
 .go-to-doc-button:hover {
-  background-color: #1b2b47;
+  background-color: #4a6ca7;
+}
+
+.chat-to-file{
+  border: 1px solid #d4e2e6;
+  padding: 10px;
+  width: fit-content;
+  /* margin: 5px; */
+  border-radius: 20px;
+  background-color: #F8FCFF;
+
 }

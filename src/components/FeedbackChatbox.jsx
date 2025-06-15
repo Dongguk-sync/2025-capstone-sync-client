@@ -1,54 +1,132 @@
-/* FeedbackChatbox.jsx */
 import React, { useEffect, useRef, useState } from 'react';
+import axios from '../api/axios';
 import './FeedbackChatBox.css';
 
-export default function FeedbackChatBox({ scrollTarget }) {
+export default function FeedbackChatBox({
+  fileId,
+  history,
+  chatTopRef,
+  studysId
+}) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const messageEndRef = useRef(null);
 
+  // 메시지 불러오기 함수 (재사용 목적)
+  const loadMessages = async (baseMessages = []) => {
+    try {
+      const res = await axios.get(`/study-messages/studys-id/${studysId}`);
+      const chatMessages = (res.data.content || []).map(msg => ({
+        from: msg.message_type === 'AI' ? 'bot' : 'user',
+        text: msg.sm_content
+      }));
+      setMessages([...baseMessages, ...chatMessages]);
+    } catch (err) {
+      console.error('❌ 채팅 메시지 로딩 실패:', err);
+      setMessages(baseMessages); // 실패 시 피드백만 표시
+    }
+  };
+
   useEffect(() => {
-    const initialFeedback = {
-      from: 'system',
-      text: `Linked List는 자료 삽입/삭제에 유리하고 배열보다 메모리 효율적입니다.
-        단점은 탐색 속도이며, 종류로는 단일/이중/원형 리스트가 있습니다.`
-    };
-    setMessages([initialFeedback]);
-  }, []);
+    if (!fileId || !history) {
+      setMessages([]);
+      return;
+    }
+
+    // 학습 피드백 + 채팅 내역 불러오기
+    axios.get(`/studys/file-id/${fileId}`)
+      .then(async res => {
+        const arr = res.data.content || [];
+        const thisRound = arr.find(item => item.studys_round === history);
+        if (!thisRound) {
+          setMessages([]);
+          return;
+        }
+
+        const baseMessages = [
+          { from: 'system', text: thisRound.studys_feed_content }
+        ];
+
+        if (studysId) {
+          await loadMessages(baseMessages);
+        } else {
+          setMessages(baseMessages);
+        }
+      })
+      .catch(err => {
+        console.error('❌ 학습 피드백 로딩 실패:', err);
+        setMessages([]);
+      });
+  }, [fileId, history, studysId]);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    const question = input.trim();
+    if (!question) return;
 
-    const newMessages = [...messages, { from: 'user', text: input }];
-    setMessages(newMessages);
+    // 사용자 질문 + 로딩 메시지 먼저 표시
+    setMessages(prev => [
+      ...prev,
+      { from: 'user', text: question },
+      { from: 'bot', text: '답변을 작성 중입니다...' }
+    ]);
     setInput('');
 
-    const response = await fetch('/chat/lecture_chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question: input }),
-    });
-    const data = await response.json();
-    setMessages([...newMessages, { from: 'bot', text: data.answer }]);
+    try {
+      // 서버에 질문 저장
+      await axios.post('/study-messages/lecture/chat', {
+        studys_id: studysId,
+        question,
+      });
+
+      // 최신 채팅 내역 다시 불러오기
+      const baseMessages = messages.filter(
+        m => !(m.from === 'bot' && m.text === '답변을 작성 중입니다...')
+      );
+      await loadMessages(baseMessages);
+
+    } catch (err) {
+      setMessages(prev => {
+        const updated = [...prev];
+        const loadingIndex = updated.findLastIndex(
+          m => m.from === 'bot' && m.text === '답변을 작성 중입니다...'
+        );
+        if (loadingIndex !== -1) {
+          updated[loadingIndex] = {
+            from: 'bot',
+            text: '답변 중 오류가 발생했습니다.'
+          };
+        }
+        return updated;
+      });
+
+      console.error('❌ 답변 요청 중 에러 발생:', err);
+      console.error('Message:', err.message);
+      console.error('Status:', err.response?.status);
+      console.error('Response:', err.response?.data);
+    } finally {
+      setTimeout(() => {
+        messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    }
   };
 
   return (
     <div className="chat-box">
       <div className="messages">
+        <div ref={chatTopRef}></div>
         {messages.map((msg, idx) => (
           <div
-          key={idx}
-          ref={idx === 0 ? scrollTarget : null} // 첫 메시지에만 ref 연결
-          className={`message ${msg.from}`}
+            key={idx}
+            ref={idx === messages.length - 1 ? messageEndRef : null}
+            className={`message ${msg.from}`}
           >
             {msg.text}
           </div>
         ))}
-        <div ref={messageEndRef} />
       </div>
       <div className="input-area">
         <input
@@ -56,7 +134,9 @@ export default function FeedbackChatBox({ scrollTarget }) {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e =>
-          e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())
+            e.key === 'Enter' && !e.shiftKey
+              ? (e.preventDefault(), handleSend())
+              : undefined
           }
           placeholder="질문을 입력하세요..."
         />

@@ -227,7 +227,18 @@ export default function MainPage() {
       setProgress(100);
       setTimeout(() => {
         setIsSubmitting(false);
-        navigate(`/studys/result/${resp.data.content.studys_id}`);
+       navigate(`/feedback/${currentStudyItem.file_id}/${currentStudyItem.studys_round}`,
+        {
+        state: {
+          file_id: currentStudyItem.file_id,
+          file_name: currentStudyItem.file_name,
+          subject_id: currentStudyItem.subject_id,
+          subject_name: currentStudyItem.subjectName,
+          latestRound : currentStudyItem.studys_round,
+          studyArr: currentStudyItem.studys_feed_content,
+        }
+      }
+       );
       }, 300);
       
       console.log("채점 결과:", resp.data);
@@ -238,45 +249,6 @@ export default function MainPage() {
       console.error("채점 API 호출 오류:", err);
       alert("채점 요청에 실패했습니다.");
     }
-    // const results = [];
-
-  //   for (let i = 0; i < wavBlobs.length; i++){
-  //     const fd = new FormData();
-  //     fd.append("file", wavBlobs[i], `recording_${i+1}.wav`);
-
-  //     const token = localStorage.getItem("accessToken");
-  //     try {
-  //     const resp = await instance.post(
-  //       "/stt",
-  //       fd,
-  //       { headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${token}`
-  //         }}
-  //     );
-  //     // const text = resp.data.text;
-  //     // console.log(`STT 결과 [녹음 ${i+1}]`, text);
-  //     // results.push(`${text}`)
-  //   }  catch(err) {
-  //     console.err("STT호출 오류: ", err);
-  //     alert("STT 요청에 실패했습니다.");
-  //     break;
-  //   }
-  // } 
-    // const combined = results.join("\n");
-    // const combined = results.join(" ");
-    // console.log(combined);
-
-    //  파일 다운받을 수 있는 부분
-    // const blob = new Blob([combined], {type: "text/plain"});
-    // const url = URL.createObjectURL(blob);
-
-    // const a = document.createElement("a");
-    // a.href = url;
-    // a.download = "transcript.txt";
-    // a.click();
-
-
     setWavBlob([]);
     setAudioUrl(null);
   };
