@@ -119,13 +119,15 @@ export default function FeedbackPage() {
           setStudysList(studyArr);
 
           if (!selectedHistory && studyArr.length > 0) {
-            const latestRound = studyArr[studyArr.length - 1].studys_round;
+            const latestRound = Math.max(...studyArr.map(item => item.studys_round));
             setSelectedHistory(latestRound);
-          }
+          } else {
+          setSelectedHistory(null);
+        }
         })
         .catch(err => console.error("학습 정보 불러오기 실패:", err));
     }
-  }, [selectedDocument?.file_id, selectedHistory]);
+  }, [selectedDocument?.file_id]);
 
   // studys_round → studys_id 매핑
   useEffect(() => {

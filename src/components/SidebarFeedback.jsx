@@ -1,3 +1,4 @@
+// SidebarFeedback.jsx
 import { FaBook } from 'react-icons/fa';
 import '../pages/FeedbackPage.css';
 
@@ -13,7 +14,8 @@ export default function SidebarFeedback({
     setSelectedDocument(document);
     // 가장 최근 회차로 선택
     if (document.histories && document.histories.length > 0) {
-      setSelectedHistory(document.histories[document.histories.length - 1]);
+      const latest = [...document.histories].sort((a, b) => b - a)[0];
+      setSelectedHistory(latest);
     } else {
       setSelectedHistory(null);
     }
