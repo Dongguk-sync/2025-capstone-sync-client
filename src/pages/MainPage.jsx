@@ -195,6 +195,9 @@ export default function MainPage() {
       console.log(pair[0] + ':', pair[1]);
     }
     setIsSubmitting(true);
+
+    // setReloadCalendar(n => n + 1);
+
     setProgress(0);
 
     // 진행률
@@ -222,11 +225,16 @@ export default function MainPage() {
           }
         }
       );
+      console.log("학습 API 전체 응답: ", resp);
+      console.log("학습 피드백 내용: ", resp.data.content);
       clearInterval(timer);
 
       setProgress(100);
+      setReloadCalendar(n=>n+1);
+
       setTimeout(() => {
         setIsSubmitting(false);
+        // onStudyCom
        navigate(`/feedback/${currentStudyItem.file_id}/${currentStudyItem.studys_round}`,
         {
         state: {
@@ -240,6 +248,8 @@ export default function MainPage() {
       }
        );
       }, 300);
+      setReloadCalendar(n => n + 1);
+
       
       console.log("채점 결과:", resp.data);
       // TODO: resp.data를 상태에 저장하거나, 모달 닫고 UI 갱신

@@ -36,8 +36,9 @@ export default function ChatLayout() {
 
 
   // ── 관련 교안 페이지로 이동 ──
-    const handleNavigateToDoc = (docId, historyIndex) => {
-      navigate(`/feedback/${docId}/${historyIndex}`);
+    const handleNavigateToDoc = (file_url) => {
+      navigate(`${file_url}`);
+      console.log(file_url);
     };
 
   // ── 세션 선택 시: 메시지 로드 ──

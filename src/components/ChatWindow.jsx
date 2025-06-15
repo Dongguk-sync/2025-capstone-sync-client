@@ -29,6 +29,7 @@ export default function ChatWindow({ session, onNavigateToDoc }) {
         </div>
       </div>
     );
+    
   }
 
   return (

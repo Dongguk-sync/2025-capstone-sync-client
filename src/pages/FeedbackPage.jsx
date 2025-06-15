@@ -49,35 +49,65 @@ export default function FeedbackPage() {
       chatTopRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  // 문서 목록 로딩
+    // 문서 목록 로딩
   useEffect(() => {
     if (!file_id && subjectId) {
       axios.get(`/answer-files/subject-id/${subjectId}`)
         .then(async res => {
           const docListRaw = res.data.content || [];
           const docList = await Promise.all(docListRaw.map(async doc => {
-            let histories = [];
-            try {
-              const studyRes = await axios.get(`/studys/file-id/${doc.file_id}`);
-              histories = (studyRes.data.content || []).map(item => item.studys_round).sort((a, b) => a - b);
-            } catch (err) {
-              console.error('회차 불러오기 실패:', err);
-            }
-            return {
-              file_id: doc.file_id,
-              file_name: doc.file_name,
-              subject_id: doc.subject_id,
-              subject_name: doc.subject_name,
-              recent_studied_date: doc.recent_studied_date || null,
-              histories
-            };
-          }));
+          let histories = [];
+          try {
+            const studyRes = await axios.get(`/studys/file-id/${doc.file_id}`);
+            histories = [
+              ...new Set((studyRes.data.content || []).map(item => item.studys_round))
+            ].sort((a, b) => a - b);
+          } catch (err) {
+            console.error('회차 불러오기 실패:', err);
+          }
+          return {
+            file_id: doc.file_id,
+            file_name: doc.file_name,
+            subject_id: doc.subject_id,
+            subject_name: doc.subject_name,
+            recent_studied_date: doc.recent_studied_date || null,
+            histories
+          };
+        }));
           setDocuments(docList);
           if (docList.length > 0) setSelectedDocument(docList[0]);
         });
     }
   }, [file_id, subjectId]);
+
+  // 문서 목록 로딩
+  // useEffect(() => {
+  //   if (!file_id && subjectId) {
+  //     axios.get(`/answer-files/subject-id/${subjectId}`)
+  //       .then(async res => {
+  //         const docListRaw = res.data.content || [];
+  //         const docList = await Promise.all(docListRaw.map(async doc => {
+  //           let histories = [];
+  //           try {
+  //             const studyRes = await axios.get(`/studys/file-id/${doc.file_id}`);
+  //             histories = (studyRes.data.content || []).map(item => item.studys_round).sort((a, b) => a - b);
+  //           } catch (err) {
+  //             console.error('회차 불러오기 실패:', err);
+  //           }
+  //           return {
+  //             file_id: doc.file_id,
+  //             file_name: doc.file_name,
+  //             subject_id: doc.subject_id,
+  //             subject_name: doc.subject_name,
+  //             recent_studied_date: doc.recent_studied_date || null,
+  //             histories
+  //           };
+  //         }));
+  //         setDocuments(docList);
+  //         if (docList.length > 0) setSelectedDocument(docList[0]);
+  //       });
+  //   }
+  // }, [file_id, subjectId]);
 
   // studysList 불러오기
   useEffect(() => {
@@ -123,7 +153,13 @@ export default function FeedbackPage() {
             <button className="scroll-top-btn" onClick={handleScrollToTop}>
               학습 결과 보기
             </button>
-            <button onClick={() => navigate(-1)} className="out-btn">나가기</button>
+            <button 
+              onClick={() =>{
+                navigate(-1);
+                // navigate(0);
+                // window.location.reload();
+              }} 
+              className="out-btn">나가기</button>
           </div>
         </div>
 
