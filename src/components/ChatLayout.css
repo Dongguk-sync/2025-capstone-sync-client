@@ -2,42 +2,40 @@
 html, body, #root {
   height: 100%;
   margin: 0;
+  /* overflow: hidden; */
 }
 
-/* 2. Make sure your top‐level layout fills the viewport & hides overflow */
-.chat-layout {
+.chat {
   display: flex;
-  flex: 1;
-  overflow: hidden; /* 스크롤 x */
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  /* overflow: hidden; */
 }
 
-/* 3. Restrict the main column to flex & hide its own overflow */
+.chat > header {
+  flex: 0 0 var(--header-height);
+}
+
 .chat-main {
   display: flex;
   overflow-y: auto;
   flex-direction: column;
   flex: 1; 
   height: 100%;
-  overflow: hidden; /* prevents this section from scrolling */
+  overflow: hidden; 
+  width: 50vw;
   
 }
 
-/* chat-layout 위치 참조를 위해 relative 지정 */
-.chat-layout {
-  position: relative;
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-
 .chat-layout {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 80px);
+  /* flex: 1 1 auto; */
   font-family: 'Helvetica Neue', Arial, sans-serif;
   padding: 0 10%;
-  box-sizing: border-box; /* 패딩이 width 계산에 포함되도록 */
-  overflow: hidden;
+  box-sizing: border-box; 
+  padding-top: var(--header-height);
 }
 
 .chat-sidebar {
@@ -46,25 +44,27 @@ html, body, #root {
   color: #333;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - var(--header-height));
 }
 
-.chat-sidebar-header {
+/* .chat-sidebar-header {
   display: flex;
   align-items: center;
   margin-left: 10px;
   padding: 10px;
-}
-
+} */
+/* 
 .chat-sidebar-header .icon {
   margin-right: 10px;
   cursor: pointer;
-}
+} */
 
 .sidebar-actions {
-  border-top: 1px dotted #333;
+  /* border-top: 1px dotted #333; */
+  border-bottom: 1px dotted #333;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 20px 10px;
 }
 
 .new-session-button,
@@ -73,7 +73,7 @@ html, body, #root {
   border-radius: 8px;
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
   padding: 8px 12px;
   color: #000000;
   cursor: pointer;
@@ -156,6 +156,7 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   background: #ffffff;
+  overflow-y: auto;
 }
 
 .chat-window {
@@ -237,8 +238,8 @@ html, body, #root {
   align-items: stretch;
   flex: 0 0 auto;
   position: fixed;
-  bottom: 0;
-  padding: 10px 30px;
+  bottom: 20px;
+  padding: 10px 20px;
 }
 
 .chat-input {
@@ -246,7 +247,7 @@ html, body, #root {
   resize: none;
   overflow: hidden;
   padding: 10px 16px;
-  width: 800px;
+  width: 50vw;
   border-radius: 6px;
   font-size: 14px;
   font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -275,7 +276,7 @@ html, body, #root {
 
 .go-to-doc-button {
   margin-top: 10px;
-  background-color: #667085;
+  background-color: #5a7db8;
   color: #ffffff;
   padding: 6px 12px;
   border: none;
@@ -286,5 +287,15 @@ html, body, #root {
 }
 
 .go-to-doc-button:hover {
-  background-color: #1b2b47;
+  background-color: #4a6ca7;
+}
+
+.chat-to-file{
+  border: 1px solid #d4e2e6;
+  padding: 10px;
+  width: fit-content;
+  /* margin: 5px; */
+  border-radius: 20px;
+  background-color: #F8FCFF;
+
 }

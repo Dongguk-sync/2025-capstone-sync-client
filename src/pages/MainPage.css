@@ -175,7 +175,7 @@
 }
 
 
-.toggle-btn {
+.Schedule-toggle-btn {
   display: flex;
   width: 80%;
   border: 1px solid #cfd4dc;
@@ -186,7 +186,7 @@
   margin-bottom: 10px;
 }
 
-.toggle-btn button {
+.Schedule-toggle-btn button {
   flex: 1;                   /* 좌우 반반씩 */
   margin: 0;                 /* 간격 제거 */
   padding: 0.2em 1em;
@@ -199,9 +199,111 @@
   border-radius: 0;          /* 버튼 자체 모서리 제거 */
 }
 
-.toggle-btn button.active {
+.Schedule-toggle-btn button.active {
   /* background: var(--color-sub);
   color: var(--color-point); */
   background-color: var(--color-sub);
   color: var(--color-main);
+}
+
+/* recordingModal2.jsx */
+.recording-modal {
+  position: relative;
+  background: #fff;
+  padding: 24px;
+  width: 360px;
+  border-radius: 8px;
+  /* box-shadow: 0 8px 24px rgba(0,0,0,0.1); */
+  text-align: center;
+  margin: 0 auto;
+}
+
+.close-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.hint {
+  margin: 4px 0 16px;
+  font-size: 14px;
+  color: #666;
+}
+
+.timer {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.waveform {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 80px;
+  gap: 2px;
+  margin-bottom: 16px;
+}
+
+.bar {
+  width: 4px;
+  height: 40px;
+  background: #333;
+  animation: bounce 1s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.toggle-btn {
+  background: #f5f5f5;
+  border: none;
+  border-radius: 50%;
+  width: 64px; height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.playback {
+  margin-bottom: 16px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.submit-btn {
+  flex: 1;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 12px 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.restart-btn {
+  flex: 1;
+  background: #ecf0f1;
+  color: #333;
+  border: none;
+  padding: 12px 0;
+  border-radius: 4px;
+  cursor: pointer;
 }

@@ -23,7 +23,6 @@
     "react-media-recorder": "^1.7.1",
     "react-pdf": "^9.2.1",
     "react-router-dom": "^7.6.0",
-    "react-speech-kit": "^3.0.1",
     "react-switch": "^7.1.0",
     "react-textarea-autosize": "^8.5.9"
   },

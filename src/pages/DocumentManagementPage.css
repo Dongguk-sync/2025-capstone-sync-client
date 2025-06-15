@@ -3,26 +3,28 @@
 .document-management-page {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 0 10%;
   height: 100vh;
   font-family: 'Helvetica Neue', Arial, sans-serif;
   background: #fff;
-  overflow-y: auto;
   margin-bottom: 16px;
+  margin-top: var(--header-height);
 }
 
 /* ─── 사이드바 ─── */
 .sidebar {
   flex: 0 0 260px;
-  height: 100vh;
+  height: 150vh;
   width: 260px;
+  padding: 1rem;
   background: #f9f9f9;
   border-right: 1px solid #e0e0e0;
-  padding: 1rem;
+  justify-content: flex-start;
+  overflow-y: auto;
   gap: 0.5rem;
   box-sizing: border-box;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 .sidebar-title {
   margin: 0 0 1rem;
@@ -109,11 +111,9 @@
 /* ─── 메인 컨텐츠 ─── */
 .main-content {
   flex: 1;
-  display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 2rem;
-  padding-top: 10rem;
+  padding-top: 5rem;
   text-align: center;
   position: static;
 }
@@ -146,6 +146,7 @@
 .add-doc-btn {
   display: flex;
   align-items: center;
+  margin-left: 20px;
   gap: 0.5rem;
   background: #fff;
   color: #333;
@@ -300,6 +301,12 @@
 }
 .modal-submit:hover {
   background: #ececec;
+}
+
+.upload-loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
 }
 
 /* ─── 페이지네이션 ─── */

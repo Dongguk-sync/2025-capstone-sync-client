@@ -29,7 +29,7 @@ function App() {
           <Route path="/management"   element={<DocumentManagementPage />} />
           {/* /feedback/:docId 로 들어오면 FeedbackPage 렌더링 */}
           <Route path="/feedback/:docId/:historyIndex" element={<FeedbackPage />} />
-          <Route path="/document/:docId" element={<DocumentViewPage />} />
+          <Route path="/subjects/:subjectId/files/:fileId" element={<DocumentViewPage />} />
         </Routes>
       </BrowserRouter>
     </div>

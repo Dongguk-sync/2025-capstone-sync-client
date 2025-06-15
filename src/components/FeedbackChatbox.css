@@ -2,7 +2,6 @@
 .chat-box {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px); /* 헤더 + 여백 고려한 높이 조절 */
   padding: 0 16px;
   overflow: hidden;
   background-color: #f9f9f9;
