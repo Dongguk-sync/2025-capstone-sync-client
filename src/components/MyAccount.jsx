@@ -196,7 +196,7 @@ export default function MyAccount() {
                         )}
             </div>
             
-            <div>
+            {/* <div>
                 <label>학습 알림</label>
                 <div className="E-Alarm">
                     <div>
@@ -215,7 +215,7 @@ export default function MyAccount() {
                     </div>
                 </div>
                 
-            </div>
+            </div> */}
 
             <div>
                 {/* <label>계정 삭제</label>

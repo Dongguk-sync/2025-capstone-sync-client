@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import 'github-markdown-css';
+import '../styles/obsidian-things.css';
 import axios from '../api/axios';
 import './DocumentViewPage.css';
 
@@ -31,22 +31,22 @@ export default function DocumentViewPage() {
   if (!doc) return <div className="document-view-page">문서 로딩 중...</div>;
 
   return (
-    <div className="document-view-page">
-      <button onClick={() => navigate(-1)} className="back-btn">← 뒤로</button>
-      <div className="document-view-title">
-        <h2>{doc.file_name}</h2>
-        <p><em>최근 학습일: {doc.recent_studied_date || '학습 전'}</em></p>
-      </div>
-
-      <div className="scrollable-content">
-        {doc.file_content ? (
-          <div className="markdown-body">
-            <ReactMarkdown>{doc.file_content}</ReactMarkdown>
+        <div className="document-view-page">
+          <button onClick={() => navigate(-1)} className="back-btn">← 뒤로</button>
+          <div className="document-view-title">
+            <h2>{doc.file_name}</h2>
+            <p><em>최근 학습일: {doc.recent_studied_date || '학습 전'}</em></p>
           </div>
-        ) : (
-          <p>문서 내용이 없습니다.</p>
-        )}
-      </div>
-    </div>
+
+          <div className="scrollable-content">
+            {doc.file_content ? (
+              <div className="markdown-preview-view">
+                <ReactMarkdown>{doc.file_content}</ReactMarkdown>
+              </div>
+            ) : (
+              <p>문서 내용이 없습니다.</p>
+            )}
+          </div>
+        </div>
   );
 }

@@ -10,7 +10,7 @@ body, html {
 .document-view-page {
   max-width: 800px;
   margin: auto;
-  padding-top: 100px;
+  /* padding-top: 100px; */
   height: 100vh;             /* 스크롤 기준 높이 설정 */
   
 }

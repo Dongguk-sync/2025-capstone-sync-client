@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from '../api/axios';
 import './FeedbackChatBox.css';
+import ReactMarkdown from 'react-markdown';
+import '../styles/obsidian-things.css';
 
 export default function FeedbackChatBox({
   fileId,
@@ -124,7 +126,9 @@ export default function FeedbackChatBox({
             ref={idx === messages.length - 1 ? messageEndRef : null}
             className={`message ${msg.from}`}
           >
-            {msg.text}
+            <div className="markdown-preview-view">
+              <ReactMarkdown>{msg.text}</ReactMarkdown>
+            </div>
           </div>
         ))}
       </div>

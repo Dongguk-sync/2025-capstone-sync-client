@@ -4,7 +4,8 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import SidebarFeedback from '../components/SidebarFeedback';
 import FeedbackChatBox from '../components/FeedbackChatBox';
 import axios from '../api/axios';
-import './FeedbackPage.css';
+import 'github-markdown-css';
+
 
 export default function FeedbackPage() {
   const { subjectId } = useParams();
