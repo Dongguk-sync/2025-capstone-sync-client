@@ -307,3 +307,12 @@
   border-radius: 4px;
   cursor: pointer;
 }
+
+.advert {
+  width: 360px;
+}
+
+.modal-backdrop{
+  display: flex;
+  gap: 80px;
+}

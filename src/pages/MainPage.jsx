@@ -7,6 +7,7 @@ import { useState, useRef, useEffect } from 'react';
 import "./MainPage.css";
 import record from "../assets/record.png";
 import DatePicker from "../components/DatePicker"
+import advert from "../assets/advert.png";
 
 import RecordingModal2 from "../components/RecordingModal2";
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
@@ -534,6 +535,8 @@ export default function MainPage() {
               onSubmit={handleSubmitRecording}
               onRestart={handleRestartRecording}
             />
+
+
 
             <ProgressModal
               open={isSubmitting}
